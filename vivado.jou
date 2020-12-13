@@ -1,0 +1,13 @@
+#-----------------------------------------------------------
+# Vivado v2020.1 (64-bit)
+# SW Build 2902540 on Wed May 27 19:54:49 MDT 2020
+# IP Build 2902112 on Wed May 27 22:43:36 MDT 2020
+# Start of session at: Tue Dec  8 22:27:13 2020
+# Process ID: 17940
+# Current directory: C:/Users/4ever/Documents/GitHub/SOMvhdl
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent7656 C:\Users\4ever\Documents\GitHub\SOMvhdl\SOMvhdl.xpr
+# Log file: C:/Users/4ever/Documents/GitHub/SOMvhdl/vivado.log
+# Journal file: C:/Users/4ever/Documents/GitHub/SOMvhdl\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.xpr
