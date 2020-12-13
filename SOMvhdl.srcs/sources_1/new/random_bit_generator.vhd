@@ -36,7 +36,8 @@ entity random_bit_generator is
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            RandInput: in STD_LOGIC_VECTOR(5 downto 0);
-           RandByte: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0)
+           RandByte: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+           RandReady:out std_logic
            );
 end random_bit_generator;
 
@@ -57,11 +58,13 @@ StateReg: PROCESS (Clk,Rst)
     IF (Rst = '1') THEN
       initCount <= 0;
       init <= '1';
+      RandReady<='0';
     ELSIF (Clk = '1' AND Clk'EVENT) THEN
       if init = '0' then
         for k in 0 to specCount-1 loop
           Currstate(k) <= Nextstate(k);
         end loop;
+        RandReady<='1';
       end if;
     END IF;
   END PROCESS;
@@ -114,7 +117,6 @@ StateReg: PROCESS (Clk,Rst)
     Nextstate(j) <= feedback(j) & Currstate(j)(7 DOWNTO 1);
     RandByte((7+(j*8)) downto (0+(j*8))) <= Currstate(j);
   end generate;
-
 
 
 end Behavioral;
