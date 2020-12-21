@@ -45,6 +45,7 @@ architecture Behavioral of init_testbench is
     signal ValueCur: STD_LOGIC_VECTOR((7*3)+(3-1) downto 0);
     signal RandByte:  STD_LOGIC_VECTOR((7*3)+(3-1) downto 0);
     signal RandReady:std_logic;
+    constant half_period : time := 5 ns;
 begin
     map_t: entity work.kmap 
         generic map(
@@ -63,5 +64,7 @@ begin
                RandReady=> RandReady
                );
     end entity work.kmap;
+
+    clk <= not clk after half_period;
 
 end Behavioral;
