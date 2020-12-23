@@ -34,17 +34,26 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity kmap is
     generic(
         MapHeight : integer:=300;
-        specCount : integer:=3
+        specCount : integer:=3;
+        rateSensetivity: positive:=1000
         );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            init: in STD_LOGIC;
            ready : out STD_LOGIC;
-           XPos : in integer;
-           YPos : in integer;
+           XPos : in positive;
+           YPos : in positive;
            ValueCur: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
            RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-           RandReady:in std_logic
+           RandReady:in std_logic;
+
+           input: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);    --input vector
+           LNRate: in unsigned(rateSensetivity'length-1 downto 0);   --Learning and neighbourhood rate multiplied by 1000 to not mess with float 1000 = 0.1 1 =0.0001 
+           train: in std_logic                                       --signal for training
+
+           bmuX: out positive;
+           bmuY: out positive;
+           FindBMU: in std_logic;
            );
 end kmap;
 
@@ -54,7 +63,7 @@ architecture Behavioral of kmap is
     signal KMap : KMapT;
     signal outputT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
     signal readyDRV: STD_LOGIC;
-    signal xCP,yCP : integer; 
+    signal xCP,yCP : positive; 
 begin
 --------output-------
 outputP: process(clk, rst)
@@ -106,5 +115,37 @@ begin
     end if;
 end process InitP;
 ready<=readyDRV;
+
+---------Train---------
+trainP: process(clk)
+begin
+    if rising_edge(clk) then
+        if train = '1' then
+            for k in 0 to specCount-1 loop
+                KMap(xCP,yCP) (k) <= std_logic_vector(unsigned(KMap(xCP,yCP) (k)) + ((LNRate*(unsigned(input((7+(k*8)) downto (0+(k*8)))) - unsigned(KMap(xCP,yCP) (k))))/to_unsigned(rateSensetivity,rateSensetivity'length))     );
+            end loop;
+        end if;
+    end if;
+end process trainP;
+
+------- BMU ------------
+bmuF: process(clk, rst)
+    variable bx,by: positive;
+    variable distance,best_distance: positive;
+begin
+    if rst = '1' then
+        
+    elsif rising_edge(clk) then
+        if FindBMU ='1' then
+            for cx in 0 to MapHeight-1 loop
+                for cy in 0 to MapHeight-1 loop
+                    for cs in 0 to specCount-1 loop
+                        ------------------------------------------todo
+                    end loop;
+                end loop;
+            end loop;
+        end if;
+    end if;
+end process bmuF;
 
 end Behavioral;
