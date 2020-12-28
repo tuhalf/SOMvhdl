@@ -34,7 +34,7 @@ use IEEE.NUMERIC_STD.ALL;
 --9600 baud, 1 bit=1/9600=0.104 mS
 
 entity serial is
-    generic(BaudRate: integer);
+    generic(BaudRate: integer := 9600);
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            dataT : in STD_LOGIC_VECTOR(7 downto 0);
@@ -43,7 +43,8 @@ entity serial is
            TX : out std_logic;
            DataAvalible : out std_logic;
            TransmitAvalible : out std_logic;
-           TransmitData : in std_logic
+           TransmitData : in std_logic;
+           ReadData : in std_logic
            );
 end serial;
 
@@ -58,12 +59,56 @@ signal RXState : RTStates :=idle;
 signal TXState : RTStates :=idle;
 signal RXPos : integer range 0 downto 7;
 signal TXPos : integer range 0 downto 7;
+
+signal writeFifo : std_logic;
+signal readFifo : std_logic;
+signal dataIn : std_logic;
+signal fifoEmpty : std_logic;
+signal fifoFull : std_logic;
+--signal FifoIN : STD_LOGIC_VECTOR(7 downto 0); registerIn
+signal fifoOut : STD_LOGIC_VECTOR(7 downto 0);
 begin
+
+    -------------fifo
+
+
+    ------------
+
+    fifoController: process(clk, rst)
+    begin
+        if rst = '1' then
+            writeFifo   <= '0';
+            readFifo    <= '0';
+            dataIn      <= '0';
+            fifoOut     <= (others => '0');
+        elsif rising_edge(clk) then
+            dataR<=fifoOut;
+            if dataIn = '1' then
+                writeFifo<='1';
+            else
+                writeFifo<='0';
+            end if;
+            if fifoEmpty = '0' then
+                DataAvalible <= '1';
+            else 
+                DataAvalible <= '0';
+            end if;
+            if ReadData = '1' and fifoEmpty = '0' then
+                readFifo<='1';
+            else
+                readFifo<='0';
+            end if;
+        end if;
+    end process fifoController;
+
+    
+
+
     Receive: process(clk, rst)
     begin
         if rst = '1' then
             RegisterIn <= (others=>'0');
-            DataAvalible <= '0';
+            dataIn <= '0';
             RXState <= idle;
             RXPos <= 0;
         elsif rising_edge(clk) then
@@ -78,7 +123,7 @@ begin
                         RXState <= data;
                         CountRX <= 0;
                         RXPos <= 0;
-                        DataAvalible <= '0';
+                        dataIn <= '0';
                     else
                         CountRX <= CountRX+1;
                     end if;
@@ -97,7 +142,7 @@ begin
                     if CountRX = (countMax) then
                         RXState <= idle;
                         CountRX <= 0;
-                        DataAvalible <= '1';
+                        dataIn <= '1';
                     else
                         CountRX <= CountRX+1;
                     end if;
