@@ -46,11 +46,12 @@ entity controller is
 
            allDone : out STD_LOGIC;
 
-           ValueCurr : in STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
+           ValueCur: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
            mapReady : in STD_LOGIC;
-           xPos : out positive;
-           yPos : out positive;
-
+           xPos : out natural;
+           yPos : out natural;
+           XPos_O : out natural;
+           YPos_O : out natural;
            trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
            LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
            train : out STD_LOGIC;
@@ -65,7 +66,11 @@ entity controller is
            bmuReady: in std_logic;
 
            RandReady:in std_logic;
-           RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0)
+           RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+
+           dataT : out STD_LOGIC_VECTOR(7 downto 0);
+           TransmitAvalible : in std_logic;
+           TransmitData : out std_logic
 
            );
 end controller;
@@ -88,6 +93,11 @@ architecture Behavioral of controller is
     signal startY : natural;
 
     signal trainDone: std_logic;
+
+    signal outdone: std_logic;
+    signal outX: natural;
+    signal outY: natural;
+    signal outS: natural;
 begin
 
     -------- Process to read inputs from serial --------
@@ -139,11 +149,14 @@ begin
             curRad<=MapHeight;
             FindBMU<= '0';
             trainDone<='0';
+            train   <= '0';
+            xPos    <= 0;
+            yPos    <= 0;
         elsif rising_edge(clk) then
-            if inputMapDone = '1' then
+            if inputMapDone = '1' and trainDone= '0' then
                 case trainStep is
                     when waitS =>
-                        if curIters<iterations then
+                        if curIters<iterations and mapReady = '1' then
                             choosenInp<= inputs( to_integer(unsigned(RandByte)) mod to_integer(inputCount));
                             if curIters = 0 then
                                 curRad<= MapHeight; 
@@ -184,6 +197,7 @@ begin
                     when bmu_wS =>
                         if bmuReady='1' then
                             trainStep <= bmuS;
+                            FindBMU<= '0';
                         else
                             trainInput<= choosenInp;
                             FindBMU<= '1';
@@ -207,6 +221,8 @@ begin
                         LNRateT := to_unsigned(lnRateLut((curIters+(dLut((abs(bmuX-curTX)+(abs(bmuY-curTY)*100))-1)*100))-1),n_bits(rateSensetivity));
                         LNRate  <= LNRateT;
                         train   <= '1';
+                        xPos    <= curTX;
+                        yPos    <= curTY;
                         trainInput <= choosenInp;
                         trainStep <= trainS;
                 end case;
@@ -216,4 +232,50 @@ begin
         end if;
     end process trainP;
 
+    allDone<=trainDone;
+
+    ----------output data-------
+    out_P: process(clk, rst)
+    begin
+        if rst = '1' then
+            outX <= 0;
+            outY <= 0;
+            outS <= 0;
+            XPos_O    <= 0;
+            YPos_O    <= 0;
+            outdone <= '0';
+        elsif rising_edge(clk) then
+            if trainDone = '1' and outdone <= '0' then
+                if outS < specCount then
+                    
+                    if outS = 0 then
+                        XPos_O<= outX;
+                        YPos_O<= outY;
+                        TransmitData<='0';
+                        outS <= outS +1;
+                    elsif TransmitAvalible = '1' then
+                        dataT<= ValueCur((7+((outS-1)*8)) downto (0+((outS-1)*8)));
+                        TransmitData<='1';
+                    else
+                        TransmitData<='0';
+                    end if;
+                else
+                    TransmitData<='0';
+                    if outY < MapHeight-1 then
+                        outY <= outY + 1;
+                        outS <= 0;
+                    else
+                        if outX < MapHeight-1 then
+                            outX <= outX+1;
+                            outS <= 0;
+                        else
+                            outdone <= '1';
+                        end if;
+                    end if;
+                end if;
+                XPos_O    <= 0;
+                YPos_O    <= 0;
+            end if;
+        end if;
+    end process out_P;
 end Behavioral;

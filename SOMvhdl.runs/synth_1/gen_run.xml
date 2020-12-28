@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7a35ticsg324-1L" LaunchTime="1609101373">
-  <File Type="PA-TCL" Name="controller.tcl"/>
-  <File Type="RDS-PROPCONSTRS" Name="controller_drc_synth.rpt"/>
-  <File Type="REPORTS-TCL" Name="controller_reports.tcl"/>
-  <File Type="RDS-RDS" Name="controller.vds"/>
-  <File Type="RDS-UTIL" Name="controller_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="controller_utilization_synth.pb"/>
-  <File Type="RDS-DCP" Name="controller.dcp"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="controller_timing_summary_synth.rpt"/>
-  <File Type="VDS-TIMING-PB" Name="controller_timing_summary_synth.pb"/>
+<GenRun Id="synth_1" LaunchPart="xc7a35ticsg324-1L" LaunchTime="1609187524">
+  <File Type="PA-TCL" Name="top_design.tcl"/>
+  <File Type="RDS-PROPCONSTRS" Name="top_design_drc_synth.rpt"/>
+  <File Type="REPORTS-TCL" Name="top_design_reports.tcl"/>
+  <File Type="RDS-RDS" Name="top_design.vds"/>
+  <File Type="RDS-UTIL" Name="top_design_utilization_synth.rpt"/>
+  <File Type="RDS-UTIL-PB" Name="top_design_utilization_synth.pb"/>
+  <File Type="RDS-DCP" Name="top_design.dcp"/>
+  <File Type="VDS-TIMINGSUMMARY" Name="top_design_timing_summary_synth.rpt"/>
+  <File Type="VDS-TIMING-PB" Name="top_design_timing_summary_synth.pb"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/ip/fifo_serial/fifo_serial.xci">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/utils.vhd">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
@@ -31,28 +38,31 @@
     </File>
     <File Path="$PSRCDIR/sources_1/new/kmap.vhd">
       <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/new/serial.vhd">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
     <File Path="$PSRCDIR/sources_1/new/random_bit_generator.vhd">
       <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/serial.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/top_design.vhd">
+      <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
     <Config>
       <Option Name="DesignMode" Val="RTL"/>
-      <Option Name="TopModule" Val="controller"/>
+      <Option Name="TopModule" Val="top_design"/>
     </Config>
   </FileSet>
   <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">

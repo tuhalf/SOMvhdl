@@ -40,10 +40,12 @@ entity kmap is
         );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
-           init: in STD_LOGIC;
+           
            ready : out STD_LOGIC;
            XPos : in natural;
+           XPos_O : in natural;
            YPos : in natural;
+           YPos_O : in natural;
            ValueCur: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
            RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
            RandReady:in std_logic;
@@ -73,6 +75,7 @@ architecture Behavioral of kmap is
     constant cycleCount: natural := ((MapHeight*MapHeight)/coresCount);
     signal coresDone: std_logic_vector(coresCount-1 downto 0);
     --constant j: integer := 0;
+    signal init: STD_LOGIC;
 begin
 --------output-------
 outputP: process(clk, rst)
@@ -83,8 +86,8 @@ begin
         outputT <= (others => '0');
     elsif rising_edge(clk) then
         if train='0' and init = '0' and FindBMU ='0' then
-            x:= std_logic_vector(to_unsigned(XPos,n_bits(MapHeight-1)));
-            y:= std_logic_vector(to_unsigned(YPos,n_bits(MapHeight-1)));
+            x:= std_logic_vector(to_unsigned(XPos_O,n_bits(MapHeight-1)));
+            y:= std_logic_vector(to_unsigned(YPos_O,n_bits(MapHeight-1)));
             comb:= x&y;
             outputT <= KMap(to_integer(unsigned(comb)));
         end if;
@@ -103,7 +106,13 @@ begin
         --kmap<= (others=>(others=>(others=>(others=>'0'))));
         xCP<= 0;
         yCP<= 0;
+        init <= '1';
     elsif rising_edge(clk) then
+        if readyDRV = '0' then
+            init <= '1';
+        else
+            init <= '0';
+        end if;
         if init = '1' and readyDRV = '0' and RandReady = '1' and train='0' and FindBMU ='0' then
             if not(yCP = MapHeight-1) then
                 --set   
@@ -134,7 +143,7 @@ begin
     end if;
 end process InitP;
 ready<=readyDRV;
-
+    
 ---------Train---------
 trainP: process(clk)
     variable kmapTemp: std_logic_vector(17 downto 0);
@@ -147,8 +156,8 @@ begin
         if train = '1' and init = '0' and FindBMU ='0'then
             kmapP:= KMap(to_integer(unsigned(comb)));
             for k in 0 to specCount-1 loop
-                x:= std_logic_vector(to_unsigned(xCP,n_bits(MapHeight-1)));
-                y:= std_logic_vector(to_unsigned(yCP,n_bits(MapHeight-1)));
+                x:= std_logic_vector(to_unsigned(XPos,n_bits(MapHeight-1)));
+                y:= std_logic_vector(to_unsigned(YPos,n_bits(MapHeight-1)));
                 comb:= x&y;
                 kmapTemp:= std_logic_vector(unsigned(kmapP ((7+(k*8)) downto (0+(k*8)))) + ((LNRate*(unsigned(input((7+(k*8)) downto (0+(k*8)))) - unsigned(kmapP((7+(k*8)) downto (0+(k*8))))))/to_unsigned(rateSensetivity,n_bits(rateSensetivity))));
                 kmapT((7+(k*8)) downto (0+(k*8))) := kmapTemp(17 downto 10);

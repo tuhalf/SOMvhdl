@@ -67,10 +67,32 @@ signal fifoEmpty : std_logic;
 signal fifoFull : std_logic;
 --signal FifoIN : STD_LOGIC_VECTOR(7 downto 0); registerIn
 signal fifoOut : STD_LOGIC_VECTOR(7 downto 0);
+COMPONENT fifo_serial
+  PORT (
+    clk : IN STD_LOGIC;
+    srst : IN STD_LOGIC;
+    din : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+    wr_en : IN STD_LOGIC;
+    rd_en : IN STD_LOGIC;
+    dout : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+    full : OUT STD_LOGIC;
+    empty : OUT STD_LOGIC
+  );
+END COMPONENT;
 begin
 
     -------------fifo
-
+    fifo_out: fifo_serial
+      PORT MAP (
+        clk => clk,
+        srst => rst,
+        din => RegisterIn,
+        wr_en => writeFifo,
+        rd_en => readFifo,
+        dout => fifoOut,
+        full => fifoFull,
+        empty => fifoEmpty
+      );
 
     ------------
 

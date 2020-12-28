@@ -1,0 +1,44 @@
+#-----------------------------------------------------------
+# Vivado v2020.1.1 (64-bit)
+# SW Build 2960000 on Wed Aug  5 22:57:20 MDT 2020
+# IP Build 2956692 on Thu Aug  6 01:41:30 MDT 2020
+# Start of session at: Mon Dec 28 23:32:11 2020
+# Process ID: 15952
+# Current directory: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1
+# Command line: vivado.exe -log top_design.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_design.tcl
+# Log file: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/top_design.vds
+# Journal file: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source top_design.tcl -notrace
+Command: synth_design -top top_design -part xc7a35ticsg324-1L -flatten_hierarchy none
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35ti'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35ti'
+INFO: [Device 21-403] Loading part xc7a35ticsg324-1L
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 13200
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1029.359 ; gain = 0.000
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'top_design' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:51]
+	Parameter MapHeight bound to: 300 - type: integer 
+	Parameter specCount bound to: 3 - type: integer 
+	Parameter rateSensetivity bound to: 1000 - type: integer 
+	Parameter iterations bound to: 100 - type: integer 
+	Parameter neighRad bound to: 300 - type: integer 
+INFO: [Synth 8-638] synthesizing module 'serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:51]
+	Parameter BaudRate bound to: 9600 - type: integer 
+WARNING: [Synth 8-6774] Null subtype or type declaration found [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:55]
+WARNING: [Synth 8-6774] Null subtype or type declaration found [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:56]
+WARNING: [Synth 8-6774] Null subtype or type declaration found [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:60]
+WARNING: [Synth 8-6774] Null subtype or type declaration found [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:61]
+INFO: [Synth 8-3491] module 'fifo_serial' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15952-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:5' bound to instance 'fifo_out' of component 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:85]
+INFO: [Synth 8-638] synthesizing module 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15952-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:19]
+INFO: [Synth 8-256] done synthesizing module 'serial' (1#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:51]
+INFO: [Synth 8-638] synthesizing module 'controller' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/controller.vhd:78]
+	Parameter MapHeight bound to: 300 - type: integer 
+	Parameter specCount bound to: 3 - type: integer 
+	Parameter rateSensetivity bound to: 1000 - type: integer 
+	Parameter iterations bound to: 100 - type: integer 
+	Parameter neighRad bound to: 300 - type: integer 
