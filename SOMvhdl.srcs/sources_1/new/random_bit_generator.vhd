@@ -56,8 +56,6 @@ begin
 StateReg: PROCESS (Clk,Rst)
   BEGIN
     IF (Rst = '1') THEN
-      initCount <= 0;
-      init <= '1';
       RandReady<='0';
     ELSIF (Clk = '1' AND Clk'EVENT) THEN
       if init = '0' then
@@ -69,9 +67,12 @@ StateReg: PROCESS (Clk,Rst)
     END IF;
   END PROCESS;
 ---------------------- Init SRs ---------------------------
-  initP: PROCESS (CLK)
+  initP: PROCESS (CLK,rst)
     BEGIN
-      if (Clk = '1' AND Clk'EVENT) then
+      IF (Rst = '1') THEN
+        initCount <= 0;
+        init <= '1';
+      elsif (Clk = '1' AND Clk'EVENT) then
         if initCount = specCount then
           init <= '0';
           initCount <=0;

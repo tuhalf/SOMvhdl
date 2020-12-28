@@ -49,16 +49,16 @@ entity serial is
 end serial;
 
 architecture Behavioral of serial is
-constant countMax : integer := (100000/baudrate); 
+constant countMax : natural := (100000/baudrate); 
 signal RegisterIn : STD_LOGIC_VECTOR(7 downto 0);
 signal RegisterOut : STD_LOGIC_VECTOR(7 downto 0);
-signal CountRX : integer range 0 downto countMax;
-signal CountTX : integer range 0 downto countMax;
+signal CountRX : natural;
+signal CountTX : natural;
 type RTStates is(idle,start,data,stopS);
 signal RXState : RTStates :=idle;
 signal TXState : RTStates :=idle;
-signal RXPos : integer range 0 downto 7;
-signal TXPos : integer range 0 downto 7;
+signal RXPos : natural;
+signal TXPos : natural;
 
 signal writeFifo : std_logic;
 signal readFifo : std_logic;
@@ -102,7 +102,6 @@ begin
             writeFifo   <= '0';
             readFifo    <= '0';
             dataIn      <= '0';
-            fifoOut     <= (others => '0');
         elsif rising_edge(clk) then
             dataR<=fifoOut;
             if dataIn = '1' then
