@@ -40,4 +40,4 @@ EAStep()
      fi
 }
 
-EAStep vivado -log kmap.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source kmap.tcl
+EAStep vivado -log controller.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source controller.tcl

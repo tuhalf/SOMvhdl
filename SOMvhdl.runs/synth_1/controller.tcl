@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/kmap.tcl"
+  variable script "C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/controller.tcl"
   variable category "vivado_synth"
 }
 
@@ -70,6 +70,7 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
+set_param chipscope.maxJobs 2
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7a35ticsg324-1L
 
@@ -88,7 +89,8 @@ OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_vhdl -library xil_defaultlib {
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/utils.vhd
-  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd
+  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/expConsts.vhd
+  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/controller.vhd
 }
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -103,17 +105,17 @@ set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
-synth_design -top kmap -part xc7a35ticsg324-1L
+synth_design -top controller -part xc7a35ticsg324-1L -flatten_hierarchy none
 OPTRACE "synth_design" END { }
 
 
 OPTRACE "write_checkpoint" START { CHECKPOINT }
 # disable binary constraint mode for synth run checkpoints
 set_param constraints.enableBinaryConstraints false
-write_checkpoint -force -noxdef kmap.dcp
+write_checkpoint -force -noxdef controller.dcp
 OPTRACE "write_checkpoint" END { }
 OPTRACE "synth reports" START { REPORT }
-create_report "synth_1_synth_report_utilization_0" "report_utilization -file kmap_utilization_synth.rpt -pb kmap_utilization_synth.pb"
+create_report "synth_1_synth_report_utilization_0" "report_utilization -file controller_utilization_synth.rpt -pb controller_utilization_synth.pb"
 OPTRACE "synth reports" END { }
 file delete __synthesis_is_running__
 close [open __synthesis_is_complete__ w]
