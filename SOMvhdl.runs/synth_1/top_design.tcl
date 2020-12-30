@@ -70,8 +70,9 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
+set_param chipscope.maxJobs 2
 OPTRACE "Creating in-memory project" START { }
-create_project -in_memory -part xc7a35ticsg324-1L
+create_project -in_memory -part xc7z010clg400-3
 
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
@@ -82,22 +83,21 @@ set_property parent.project_path C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl
 set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language VHDL [current_project]
-set_property board_part_repo_paths {C:/Users/4ever/AppData/Roaming/Xilinx/Vivado/2020.1/xhub/board_store/xilinx_board_store} [current_project]
-set_property board_part digilentinc.com:arty-a7-35:part0:1.0 [current_project]
 set_property ip_output_repo c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
+add_files -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller.dcp
+set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller.dcp]
+add_files -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/kmap_synth_1/kmap.dcp
+set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/kmap_synth_1/kmap.dcp]
 read_vhdl -library xil_defaultlib {
-  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/utils.vhd
-  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/expConsts.vhd
-  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/controller.vhd
-  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd
+  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/utils.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd
 }
-read_ip -quiet c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xci
+read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xci
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial_ooc.xdc]
 
@@ -110,13 +110,16 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
+read_xdc C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc
+set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]
+
 read_xdc dont_touch.xdc
 set_property used_in_implementation false [get_files dont_touch.xdc]
 set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
-synth_design -top top_design -part xc7a35ticsg324-1L -flatten_hierarchy none
+synth_design -top top_design -part xc7z010clg400-3 -flatten_hierarchy none
 OPTRACE "synth_design" END { }
 
 

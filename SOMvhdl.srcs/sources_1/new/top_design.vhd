@@ -44,11 +44,70 @@ entity top_design is
            rst : in STD_LOGIC;
            tx : out STD_LOGIC;
            rx : in STD_LOGIC;
-           leds : out STD_LOGIC_VECTOR (7 downto 0);
+           leds : out STD_LOGIC_VECTOR (3 downto 0);
            random : in STD_LOGIC_VECTOR (5 downto 0));
 end top_design;
 
 architecture Behavioral of top_design is
+
+    COMPONENT controller
+        Port ( clk : in STD_LOGIC;
+               rst : in STD_LOGIC;
+    
+               allDone : out STD_LOGIC;
+    
+               ValueCur: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+               mapReady : in STD_LOGIC;
+               xPos : out natural;
+               yPos : out natural;
+               XPos_O : out natural;
+               YPos_O : out natural;
+               trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
+               LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
+               train : out STD_LOGIC;
+    
+               inputRead : out STD_LOGIC;
+               inputReady : in STD_LOGIC;
+               input : in STD_LOGIC_VECTOR (7 downto 0);
+               
+               bmuX: in natural;
+               bmuY: in natural;
+               FindBMU: out std_logic;
+               bmuReady: in std_logic;
+    
+               RandReady:in std_logic;
+               RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+    
+               dataT : out STD_LOGIC_VECTOR(7 downto 0);
+               TransmitAvalible : in std_logic;
+               TransmitData : out std_logic
+    
+               );
+    end COMPONENT;
+
+    COMPONENT kmap
+        Port ( clk : in STD_LOGIC;
+               rst : in STD_LOGIC;
+               
+               ready : out STD_LOGIC;
+               XPos : in natural;
+               XPos_O : in natural;
+               YPos : in natural;
+               YPos_O : in natural;
+               ValueCur: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+               RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+               RandReady:in std_logic;
+    
+               input: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);    --input vector
+               LNRate: in unsigned(n_bits(rateSensetivity)-1 downto 0);   --Learning and neighbourhood rate multiplied by 1000 to not mess with float 1000 = 0.1 1 =0.0001 
+               train: in std_logic;                                      --signal for training
+    
+               bmuX: out natural;
+               bmuY: out natural;
+               FindBMU: in std_logic;
+               bmuReady: out std_logic
+               );
+    end COMPONENT;
 
     signal RandByte:  STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
     signal RandReady: std_logic;
@@ -79,6 +138,11 @@ architecture Behavioral of top_design is
     signal YPos_O : natural;
 begin
 
+    leds(3)<=allDone;
+    leds(2)<=bmuReady;
+    leds(1)<=ready;
+    leds(0)<=RandReady;
+
     serial_T: entity work.serial
         port map( 
             clk => clk ,
@@ -93,7 +157,7 @@ begin
             ReadData => inputRead 
         );
 
-    controller_T: entity work.controller
+    controller_T: controller
         port map( 
             clk => clk,
             rst => rst,
@@ -121,7 +185,7 @@ begin
             YPos_O  => YPos_O
         );
 
-    kmap_T: entity work.kmap
+    kmap_T: kmap
         port map( 
             clk =>  clk,
             rst =>  rst,

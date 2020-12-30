@@ -98,6 +98,7 @@ architecture Behavioral of controller is
     signal outX: natural;
     signal outY: natural;
     signal outS: natural;
+    attribute ram_style: string;
 begin
 
     -------- Process to read inputs from serial --------

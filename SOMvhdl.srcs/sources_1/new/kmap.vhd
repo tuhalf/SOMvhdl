@@ -36,7 +36,7 @@ entity kmap is
         MapHeight : integer:=300;
         specCount : integer:=3;
         rateSensetivity: natural:=1000;
-        coresCount: integer:= 5
+        coresCount: integer:= 1
         );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
@@ -63,8 +63,10 @@ end kmap;
 
 architecture Behavioral of kmap is
     --type Specs is array(specCount-1 downto 0) of std_logic_vector (7 DOWNTO 0);
-    type KMapT is array((n_bits(MapHeight-1)*2)-1 downto 0) of STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+    type KMapT is array(0 to (2**(n_bits(MapHeight-1)*2))-1) of STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0); --(n_bits(MapHeight-1)*2)-1
     signal KMap : KMapT;
+    attribute ram_style: string;
+    attribute ram_style of KMap : signal is "block";
     signal outputT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
     signal readyDRV: STD_LOGIC;
     signal bmuReadyDRV: STD_LOGIC;
@@ -76,6 +78,7 @@ architecture Behavioral of kmap is
     signal coresDone: std_logic_vector(coresCount-1 downto 0);
     --constant j: integer := 0;
     signal init: STD_LOGIC;
+    
 begin
 --------output-------
 outputP: process(clk, rst)
@@ -100,6 +103,9 @@ ValueCur <= outputT;
 InitP: process(clk, rst)
 variable x,y:std_logic_vector(n_bits(MapHeight-1)-1 downto 0);
 variable comb: std_logic_vector((n_bits(MapHeight-1)*2)-1 downto 0);
+variable kmapTemp: std_logic_vector(17 downto 0);
+variable kmapT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+variable kmapP: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
 begin
     if rst = '1' then
         readyDRV<='0';
@@ -139,21 +145,7 @@ begin
                     KMap(to_integer(unsigned(comb)))  <= RandByte;
                 readyDRV<='1';
             end if;
-        end if;
-    end if;
-end process InitP;
-ready<=readyDRV;
-    
----------Train---------
-trainP: process(clk)
-    variable kmapTemp: std_logic_vector(17 downto 0);
-    variable kmapT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-    variable kmapP: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-    variable x,y:std_logic_vector(n_bits(MapHeight-1)-1 downto 0);
-    variable comb: std_logic_vector((n_bits(MapHeight-1)*2)-1 downto 0);
-begin
-    if rising_edge(clk) then
-        if train = '1' and init = '0' and FindBMU ='0'then
+        elsif train = '1' and init = '0' and FindBMU ='0'then
             kmapP:= KMap(to_integer(unsigned(comb)));
             for k in 0 to specCount-1 loop
                 x:= std_logic_vector(to_unsigned(XPos,n_bits(MapHeight-1)));
@@ -165,7 +157,31 @@ begin
                 kmap(to_integer(unsigned(comb))) <= kmapT;
         end if;
     end if;
-end process trainP;
+end process InitP;
+ready<=readyDRV;
+    
+---------Train---------
+--trainP: process(clk)
+--    variable kmapTemp: std_logic_vector(17 downto 0);
+--    variable kmapT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+--    variable kmapP: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+--    variable x,y:std_logic_vector(n_bits(MapHeight-1)-1 downto 0);
+--    variable comb: std_logic_vector((n_bits(MapHeight-1)*2)-1 downto 0);
+--begin
+--    if rising_edge(clk) then
+--        if train = '1' and init = '0' and FindBMU ='0'then
+--            kmapP:= KMap(to_integer(unsigned(comb)));
+--            for k in 0 to specCount-1 loop
+--                x:= std_logic_vector(to_unsigned(XPos,n_bits(MapHeight-1)));
+--                y:= std_logic_vector(to_unsigned(YPos,n_bits(MapHeight-1)));
+--                comb:= x&y;
+--                kmapTemp:= std_logic_vector(unsigned(kmapP ((7+(k*8)) downto (0+(k*8)))) + ((LNRate*(unsigned(input((7+(k*8)) downto (0+(k*8)))) - unsigned(kmapP((7+(k*8)) downto (0+(k*8))))))/to_unsigned(rateSensetivity,n_bits(rateSensetivity))));
+--                kmapT((7+(k*8)) downto (0+(k*8))) := kmapTemp(17 downto 10);
+--            end loop;
+--                kmap(to_integer(unsigned(comb))) <= kmapT;
+--        end if;
+--    end if;
+--end process trainP;
 
 ------- BMU ------------
 --bmuF: process(clk, rst)

@@ -101,7 +101,6 @@ begin
         if rst = '1' then
             writeFifo   <= '0';
             readFifo    <= '0';
-            dataIn      <= '0';
         elsif rising_edge(clk) then
             dataR<=fifoOut;
             if dataIn = '1' then

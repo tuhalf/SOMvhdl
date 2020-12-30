@@ -53,36 +53,18 @@ signal countState:countStates;
 signal rndPrev: std_logic_vector(5 downto 0);
 begin
   --------------------------State Registers ----------------------
-StateReg: PROCESS (Clk,Rst)
-  BEGIN
-    IF (Rst = '1') THEN
-      RandReady<='0';
-    ELSIF (Clk = '1' AND Clk'EVENT) THEN
-      if init = '0' then
-        for k in 0 to specCount-1 loop
-          Currstate(k) <= Nextstate(k);
-        end loop;
-        RandReady<='1';
-      end if;
-    END IF;
-  END PROCESS;
+--StateReg: PROCESS (Clk,Rst)
+--  BEGIN
+--    IF (Rst = '1') THEN
+--      RandReady<='0';
+--    ELSIF (Clk = '1' AND Clk'EVENT) THEN
+--      if init = '1' then
+--        Currstate <= Nextstate;
+--        RandReady<='1';
+--      end if;
+--    END IF;
+--  END PROCESS;
 ---------------------- Init SRs ---------------------------
-  initP: PROCESS (CLK,rst)
-    BEGIN
-      IF (Rst = '1') THEN
-        initCount <= 0;
-        init <= '1';
-      elsif (Clk = '1' AND Clk'EVENT) then
-        if initCount = specCount then
-          init <= '0';
-          initCount <=0;
-        elsif(init = '1' and countReady = '1') then
-          Currstate(initCount) <= count;
-          initCount<= initCount+1;
-          countReady<='0';
-        end if;
-    end if;
-  end process;
 --------------------- Prepare random 8 bits -----------------------
   countPRP: process(clk, rst)
   begin
@@ -91,26 +73,45 @@ StateReg: PROCESS (Clk,Rst)
       count<= (OTHERS => '0');
       countState <= first;
       rndPrev<=(OTHERS => '0');
+      initCount <= 0;
+      init <= '0';
+      RandReady<='0';
+      Currstate<= (others => (others => '0'));
     elsif (Clk = '1' AND Clk'EVENT) then
-      case countState is
-        when first =>
-          if not(RandInput = rndPrev) then
-            count(5 downto 0)<= RandInput;
-            countState<=second;
-            rndPrev<=RandInput;
+      if init = '0' then
+        if countReady = '0' then
+          case countState is
+            when first =>
+              if not(RandInput = rndPrev) then
+                count(5 downto 0)<= RandInput;
+                countState<=second;
+                rndPrev<=RandInput;
+              end if;
+            when second =>
+              if not(RandInput = rndPrev) then
+                count(7 downto 6)<= RandInput(1 downto 0);
+                countState<=first;
+                rndPrev<=RandInput;
+                countReady<='1';
+              end if;
+            when others =>
+              countState<=first;
+          end case;
+        else
+          if initCount = specCount then
+            init <= '1';
+          elsif(init = '0' and countReady = '1') then
+            Currstate(initCount) <= count;
+            initCount<= initCount+1;
+            countReady<='0';
           end if;
-        when second =>
-          if not(RandInput = rndPrev) then
-            count(7 downto 6)<= RandInput(1 downto 0);
-            countState<=first;
-            rndPrev<=RandInput;
-            countReady<='1';
-          end if;
-        when others =>
-          
-      
-      end case;
+        end if;
+      else
+        Currstate <= Nextstate;
+        RandReady<='1';
+      end if;
     end if;
+      
   end process countPRP;
 
   feedbackG : for j in 0 to specCount-1 generate

@@ -1,2 +1,4 @@
 
 *.wdb
+SOMvhdl.runs/*/
+SOMvhdl.cache/*/
