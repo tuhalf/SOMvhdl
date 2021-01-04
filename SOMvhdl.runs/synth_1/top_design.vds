@@ -2,29 +2,24 @@
 # Vivado v2020.1.1 (64-bit)
 # SW Build 2960000 on Wed Aug  5 22:57:20 MDT 2020
 # IP Build 2956692 on Thu Aug  6 01:41:30 MDT 2020
-# Start of session at: Tue Dec 29 23:23:22 2020
-# Process ID: 15364
+# Start of session at: Tue Jan  5 00:47:12 2021
+# Process ID: 14204
 # Current directory: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1
 # Command line: vivado.exe -log top_design.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_design.tcl
 # Log file: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/top_design.vds
 # Journal file: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1\vivado.jou
 #-----------------------------------------------------------
 source top_design.tcl -notrace
-Command: synth_design -top top_design -part xc7z010clg400-3 -flatten_hierarchy none
+Command: synth_design -top top_design -part xc7a35ticsg324-1L -flatten_hierarchy none
 Starting synth_design
-WARNING: [Vivado_Tcl 4-393] The 'Synthesis' target of the following IPs are stale, please generate the output products using the generate_target or synth_ip command before running synth_design.
-C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xci
-
-INFO: [IP_Flow 19-2162] IP 'fifo_serial' is locked:
-* Current project part 'xc7z010clg400-3' and the part 'xc7a35ticsg324-1L' used to customize the IP 'fifo_serial' do not match.
-Attempting to get a license for feature 'Synthesis' and/or device 'xc7z010'
-INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z010'
-INFO: [Device 21-403] Loading part xc7z010clg400-3
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35ti'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35ti'
+INFO: [Device 21-403] Loading part xc7a35ticsg324-1L
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 1876
+INFO: [Synth 8-7075] Helper process launched with PID 16856
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 1029.691 ; gain = 0.000
+Starting RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1026.086 ; gain = 0.000
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-638] synthesizing module 'top_design' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:51]
 	Parameter MapHeight bound to: 300 - type: integer 
@@ -34,41 +29,47 @@ INFO: [Synth 8-638] synthesizing module 'top_design' [C:/Users/4ever/Documents/G
 	Parameter neighRad bound to: 300 - type: integer 
 INFO: [Synth 8-638] synthesizing module 'serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:51]
 	Parameter BaudRate bound to: 9600 - type: integer 
-INFO: [Synth 8-3491] module 'fifo_serial' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:5' bound to instance 'fifo_out' of component 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:85]
-INFO: [Synth 8-638] synthesizing module 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:19]
+INFO: [Synth 8-3491] module 'fifo_serial' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:5' bound to instance 'fifo_out' of component 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:85]
+INFO: [Synth 8-638] synthesizing module 'fifo_serial' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/fifo_serial_stub.vhdl:19]
 INFO: [Synth 8-256] done synthesizing module 'serial' (1#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd:51]
-INFO: [Synth 8-3491] module 'controller' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/controller_stub.vhdl:5' bound to instance 'controller_T' of component 'controller' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:160]
-INFO: [Synth 8-638] synthesizing module 'controller' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/controller_stub.vhdl:35]
-INFO: [Synth 8-3491] module 'kmap' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/kmap_stub.vhdl:5' bound to instance 'kmap_T' of component 'kmap' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:188]
-INFO: [Synth 8-638] synthesizing module 'kmap' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-15364-LAPTOP-50F2E74H/realtime/kmap_stub.vhdl:28]
+INFO: [Synth 8-3491] module 'controller' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/controller_stub.vhdl:5' bound to instance 'controller_T' of component 'controller' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:143]
+INFO: [Synth 8-638] synthesizing module 'controller' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/controller_stub.vhdl:37]
+INFO: [Synth 8-638] synthesizing module 'kmap' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:66]
+	Parameter MapHeight bound to: 100 - type: integer 
+	Parameter specCount bound to: 3 - type: integer 
+	Parameter rateSensetivity bound to: 1000 - type: integer 
+	Parameter coresCount bound to: 1 - type: integer 
+INFO: [Synth 8-3491] module 'blk_mem_gen_0' declared at 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/blk_mem_gen_0_stub.vhdl:5' bound to instance 'rammm' of component 'blk_mem_gen_0' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:114]
+INFO: [Synth 8-638] synthesizing module 'blk_mem_gen_0' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/.Xil/Vivado-14204-LAPTOP-50F2E74H/realtime/blk_mem_gen_0_stub.vhdl:18]
+INFO: [Synth 8-256] done synthesizing module 'kmap' (2#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:66]
 INFO: [Synth 8-638] synthesizing module 'random_bit_generator' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd:44]
 	Parameter specCount bound to: 3 - type: integer 
 INFO: [Synth 8-226] default block is never used [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd:83]
-INFO: [Synth 8-256] done synthesizing module 'random_bit_generator' (2#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd:44]
-INFO: [Synth 8-256] done synthesizing module 'top_design' (3#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:51]
+INFO: [Synth 8-256] done synthesizing module 'random_bit_generator' (3#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd:44]
+INFO: [Synth 8-256] done synthesizing module 'top_design' (4#1) [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd:51]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1029.691 ; gain = 0.000
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1026.086 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1029.691 ; gain = 0.000
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1026.086 ; gain = 0.000
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1029.691 ; gain = 0.000
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 1026.086 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 1029.691 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.022 . Memory (MB): peak = 1026.086 ; gain = 0.000
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
 Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller/controller_in_context.xdc] for cell 'controller_T'
 Finished Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller/controller_in_context.xdc] for cell 'controller_T'
-Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/kmap_synth_1/kmap/kmap_in_context.xdc] for cell 'kmap_T'
-Finished Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/kmap_synth_1/kmap/kmap_in_context.xdc] for cell 'kmap_T'
 Parsing XDC File [c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial/fifo_serial_in_context.xdc] for cell 'serial_T/fifo_out'
 Finished Parsing XDC File [c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial/fifo_serial_in_context.xdc] for cell 'serial_T/fifo_out'
+Parsing XDC File [c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0/blk_mem_gen_0_in_context.xdc] for cell 'kmap_T/rammm'
+Finished Parsing XDC File [c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0/blk_mem_gen_0_in_context.xdc] for cell 'kmap_T/rammm'
 Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]
 Finished Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_design_propImpl.xdc].
@@ -77,27 +78,29 @@ Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/d
 Finished Parsing XDC File [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/dont_touch.xdc]
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1059.887 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1064.031 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.006 . Memory (MB): peak = 1059.887 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1064.031 ; gain = 0.000
+WARNING: [Timing 38-316] Clock period '20.000' specified during out-of-context synthesis of instance 'kmap_T/rammm' at clock pin 'clka' is different from the actual clock period '10.000', this can lead to different synthesis results.
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished Constraint Validation : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1072.000 ; gain = 45.914
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
-Loading part: xc7z010clg400-3
+Loading part: xc7a35ticsg324-1L
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1072.000 ; gain = 45.914
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 Applied set_property DONT_TOUCH = true for serial_T/fifo_out. (constraint file  auto generated constraint, line ).
+Applied set_property DONT_TOUCH = true for kmap_T/rammm. (constraint file  auto generated constraint, line ).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1072.000 ; gain = 45.914
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'RXState_reg' in module 'serial'
 INFO: [Synth 8-802] inferred FSM for state register 'TXState_reg' in module 'serial'
@@ -120,7 +123,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'TXState_reg' using encodin
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'RXState_reg' using encoding 'sequential' in module 'serial'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1072.000 ; gain = 45.914
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -128,23 +131,36 @@ Start RTL Component Statistics
 Detailed RTL Component Info : 
 +---Adders : 
 	   2 Input   31 Bit       Adders := 4     
+	   3 Input   10 Bit       Adders := 1     
+	   2 Input   10 Bit       Adders := 3     
+	   3 Input    9 Bit       Adders := 3     
+	   2 Input    8 Bit       Adders := 3     
+	   3 Input    8 Bit       Adders := 3     
 +---XORs : 
 	   4 Input      1 Bit         XORs := 3     
 +---Registers : 
-	               31 Bit    Registers := 4     
+	               31 Bit    Registers := 9     
+	               24 Bit    Registers := 3     
+	               14 Bit    Registers := 2     
 	                8 Bit    Registers := 7     
 	                6 Bit    Registers := 1     
-	                1 Bit    Registers := 10    
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 17    
 +---Muxes : 
-	   2 Input   31 Bit        Muxes := 3     
+	   2 Input   31 Bit        Muxes := 5     
 	   4 Input   31 Bit        Muxes := 3     
-	   2 Input    8 Bit        Muxes := 7     
+	   2 Input   25 Bit        Muxes := 1     
+	   2 Input   24 Bit        Muxes := 1     
+	   2 Input   14 Bit        Muxes := 3     
+	   2 Input   10 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 10    
 	   4 Input    8 Bit        Muxes := 2     
+	   2 Input    7 Bit        Muxes := 1     
 	   2 Input    6 Bit        Muxes := 1     
-	   4 Input    2 Bit        Muxes := 2     
-	   2 Input    2 Bit        Muxes := 3     
-	   2 Input    1 Bit        Muxes := 12    
-	   4 Input    1 Bit        Muxes := 11    
+	   4 Input    2 Bit        Muxes := 3     
+	   2 Input    2 Bit        Muxes := 7     
+	   2 Input    1 Bit        Muxes := 37    
+	   4 Input    1 Bit        Muxes := 14    
 	   3 Input    1 Bit        Muxes := 1     
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
@@ -153,34 +169,68 @@ Finished RTL Component Statistics
 Start Part Resource Summary
 ---------------------------------------------------------------------------------
 Part Resources:
-DSPs: 80 (col length:40)
-BRAMs: 120 (col length: RAMB18 40 RAMB36 20)
+DSPs: 90 (col length:60)
+BRAMs: 100 (col length: RAMB18 60 RAMB36 30)
 ---------------------------------------------------------------------------------
 Finished Part Resource Summary
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
+DSP Report: Generating DSP addra0, operation Mode is: C+A*(B:0x64).
+DSP Report: operator addra0 is absorbed into DSP addra0.
+DSP Report: operator addra1 is absorbed into DSP addra0.
+DSP Report: Generating DSP dina2, operation Mode is: A*B.
+DSP Report: operator dina2 is absorbed into DSP dina2.
+DSP Report: Generating DSP dina2, operation Mode is: A*B.
+DSP Report: operator dina2 is absorbed into DSP dina2.
+DSP Report: Generating DSP dina2, operation Mode is: A*B.
+DSP Report: operator dina2 is absorbed into DSP dina2.
+DSP Report: Generating DSP addrb0, operation Mode is: C+(A:0x64)*B.
+DSP Report: operator addrb0 is absorbed into DSP addrb0.
+DSP Report: operator p_0_in is absorbed into DSP addrb0.
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 1st driver pin 'kmap_T/bmuReadyDRV_reg/Q' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:441]
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 2nd driver pin 'VCC' [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:441]
+CRITICAL WARNING: [Synth 8-6858] multi-driven net Q is connected to at least one constant driver which has been preserved, other driver is ignored [C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd:441]
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:22 ; elapsed = 00:00:23 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:22 ; elapsed = 00:00:23 . Memory (MB): peak = 1072.000 ; gain = 45.914
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping	Report (see note below)
++------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping  | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|kmap        | C+A*(B:0x64) | 14     | 14     | 14     | -      | 14     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
+|kmap        | A*B          | 10     | 8      | -      | -      | 18     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|kmap        | A*B          | 10     | 8      | -      | -      | 18     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|kmap        | A*B          | 10     | 8      | -      | -      | 18     | 0    | 0    | -    | -    | -     | 0    | 0    | 
+|kmap        | C+(A:0x64)*B | 14     | 14     | 14     | -      | 14     | 0    | 0    | 0    | -    | -     | 0    | 0    | 
++------------+--------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:29 ; elapsed = 00:00:30 . Memory (MB): peak = 1059.887 ; gain = 30.195
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 1088.375 ; gain = 62.289
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:35 ; elapsed = 00:00:37 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished Timing Optimization : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 1110.859 ; gain = 84.773
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:36 ; elapsed = 00:00:37 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished Technology Mapping : Time (s): cpu = 00:00:34 ; elapsed = 00:00:34 . Memory (MB): peak = 1120.652 ; gain = 94.566
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -192,19 +242,19 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished IO Insertion : Time (s): cpu = 00:00:37 ; elapsed = 00:00:38 . Memory (MB): peak = 1120.652 ; gain = 94.566
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:37 ; elapsed = 00:00:38 . Memory (MB): peak = 1120.652 ; gain = 94.566
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:37 ; elapsed = 00:00:38 . Memory (MB): peak = 1120.652 ; gain = 94.566
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -215,51 +265,52 @@ Report BlackBoxes:
 |      |BlackBox name |Instances |
 +------+--------------+----------+
 |1     |fifo_serial   |         1|
-|2     |controller    |         1|
-|3     |kmap          |         1|
+|2     |blk_mem_gen_0 |         1|
+|3     |controller    |         1|
 +------+--------------+----------+
 
 Report Cell Usage: 
-+------+-----------------+------+
-|      |Cell             |Count |
-+------+-----------------+------+
-|1     |controller_bbox  |     1|
-|2     |fifo_serial_bbox |     1|
-|3     |kmap_bbox        |     1|
-|4     |BUFG             |     1|
-|5     |CARRY4           |    40|
-|6     |LUT1             |     2|
-|7     |LUT2             |    70|
-|8     |LUT3             |    29|
-|9     |LUT4             |    36|
-|10    |LUT5             |    30|
-|11    |LUT6             |    32|
-|12    |FDCE             |   159|
-|13    |FDPE             |     2|
-|14    |FDRE             |    71|
-|15    |IBUF             |     9|
-|16    |OBUF             |     5|
-+------+-----------------+------+
++------+-------------------+------+
+|      |Cell               |Count |
++------+-------------------+------+
+|1     |blk_mem_gen_0_bbox |     1|
+|2     |controller_bbox    |     1|
+|3     |fifo_serial_bbox   |     1|
+|4     |BUFG               |     1|
+|5     |CARRY4             |    56|
+|6     |DSP48E1            |     2|
+|7     |LUT1               |     4|
+|8     |LUT2               |    86|
+|9     |LUT3               |    68|
+|10    |LUT4               |    60|
+|11    |LUT5               |    36|
+|12    |LUT6               |    41|
+|13    |FDCE               |   304|
+|14    |FDPE               |     3|
+|15    |FDRE               |    71|
+|16    |IBUF               |     9|
+|17    |OBUF               |     5|
++------+-------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:39 ; elapsed = 00:00:41 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:37 ; elapsed = 00:00:38 . Memory (MB): peak = 1120.652 ; gain = 94.566
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:32 ; elapsed = 00:00:39 . Memory (MB): peak = 1213.199 ; gain = 153.313
-Synthesis Optimization Complete : Time (s): cpu = 00:00:40 ; elapsed = 00:00:41 . Memory (MB): peak = 1213.199 ; gain = 183.508
+Synthesis finished with 0 errors, 3 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:29 ; elapsed = 00:00:36 . Memory (MB): peak = 1120.652 ; gain = 48.652
+Synthesis Optimization Complete : Time (s): cpu = 00:00:37 ; elapsed = 00:00:38 . Memory (MB): peak = 1120.652 ; gain = 94.566
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1213.199 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 40 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 1120.660 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 58 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1213.199 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1120.660 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
 INFO: [Common 17-83] Releasing license: Synthesis
-33 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.
+34 Infos, 1 Warnings, 3 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:46 ; elapsed = 00:00:48 . Memory (MB): peak = 1213.199 ; gain = 183.508
+synth_design: Time (s): cpu = 00:00:42 ; elapsed = 00:00:45 . Memory (MB): peak = 1120.660 ; gain = 94.574
 INFO: [Common 17-1381] The checkpoint 'C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/top_design.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file top_design_utilization_synth.rpt -pb top_design_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Tue Dec 29 23:24:15 2020...
+INFO: [Common 17-206] Exiting Vivado at Tue Jan  5 00:48:01 2021...

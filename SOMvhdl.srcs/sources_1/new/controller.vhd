@@ -34,12 +34,12 @@ use work.expConsts.all;
 
 entity controller is
     generic(
-        MapHeight : positive:=300;
+        MapHeight : positive:=100;
         specCount : positive:=3;
         --maxInput : positive:=100;
         rateSensetivity: positive:=1000;
         iterations: positive:=100;
-        neighRad : positive:=300
+        neighRad : positive:=100
         );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
@@ -52,6 +52,8 @@ entity controller is
            yPos : out natural;
            XPos_O : out natural;
            YPos_O : out natural;
+           outReady : in STD_LOGIC;
+           getOut : out STD_LOGIC;
            trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
            LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
            train : out STD_LOGIC;
@@ -99,6 +101,9 @@ architecture Behavioral of controller is
     signal outY: natural;
     signal outS: natural;
     attribute ram_style: string;
+    signal outGetFlag : std_logic;
+
+    signal trainTo: natural;
 begin
 
     -------- Process to read inputs from serial --------
@@ -153,6 +158,7 @@ begin
             train   <= '0';
             xPos    <= 0;
             yPos    <= 0;
+            trainTo <= 0;
         elsif rising_edge(clk) then
             if inputMapDone = '1' and trainDone= '0' then
                 case trainStep is
@@ -205,18 +211,23 @@ begin
                         end if;
                     when trainS =>
                         train   <= '0';
-                        if curTY < endTY then
-                            curTY <= curTY +1;
-                            trainStep <= train_wS;
-                        elsif curTY = endTY then
-                            if curTX < endTX then
-                                curTX <= curTX +1;
-                                curTY <= startY;
+                        if trainTo < 3 then
+                            trainTo <= trainTo +1;
+                        else
+                            if curTY < endTY then
+                                curTY <= curTY +1;
                                 trainStep <= train_wS;
-                            else
-                                curIters <= curIters + 1;
-                                trainStep <= waitS;
+                            elsif curTY = endTY then
+                                if curTX < endTX then
+                                    curTX <= curTX +1;
+                                    curTY <= startY;
+                                    trainStep <= train_wS;
+                                else
+                                    curIters <= curIters + 1;
+                                    trainStep <= waitS;
+                                end if;
                             end if;
+                            trainTo <= 0;
                         end if;
                     when train_wS =>
                         LNRateT := to_unsigned(lnRateLut((curIters+(dLut((abs(bmuX-curTX)+(abs(bmuY-curTY)*100))-1)*100))-1),n_bits(rateSensetivity));
@@ -245,6 +256,8 @@ begin
             XPos_O    <= 0;
             YPos_O    <= 0;
             outdone <= '0';
+            getOut<= '0';
+            outGetFlag<= '0';
         elsif rising_edge(clk) then
             if trainDone = '1' and outdone <= '0' then
                 if outS < specCount then
@@ -253,14 +266,24 @@ begin
                         XPos_O<= outX;
                         YPos_O<= outY;
                         TransmitData<='0';
-                        outS <= outS +1;
+                        getOut<= '1';
+                        if outReady = '1' then
+                            outGetFlag<= '1';
+                        end if;
+                        if outGetFlag='1' then
+                            outS <= outS +1;
+                        end if;
                     elsif TransmitAvalible = '1' then
                         dataT<= ValueCur((7+((outS-1)*8)) downto (0+((outS-1)*8)));
                         TransmitData<='1';
+                        getOut<= '0';
                     else
                         TransmitData<='0';
                     end if;
                 else
+                    outGetFlag<= '0';
+                    getOut<= '0';
+
                     TransmitData<='0';
                     if outY < MapHeight-1 then
                         outY <= outY + 1;

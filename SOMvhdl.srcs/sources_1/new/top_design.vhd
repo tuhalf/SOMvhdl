@@ -51,61 +51,40 @@ end top_design;
 architecture Behavioral of top_design is
 
     COMPONENT controller
-        Port ( clk : in STD_LOGIC;
-               rst : in STD_LOGIC;
-    
-               allDone : out STD_LOGIC;
-    
-               ValueCur: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-               mapReady : in STD_LOGIC;
-               xPos : out natural;
-               yPos : out natural;
-               XPos_O : out natural;
-               YPos_O : out natural;
-               trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
-               LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
-               train : out STD_LOGIC;
-    
-               inputRead : out STD_LOGIC;
-               inputReady : in STD_LOGIC;
-               input : in STD_LOGIC_VECTOR (7 downto 0);
-               
-               bmuX: in natural;
-               bmuY: in natural;
-               FindBMU: out std_logic;
-               bmuReady: in std_logic;
-    
-               RandReady:in std_logic;
-               RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-    
-               dataT : out STD_LOGIC_VECTOR(7 downto 0);
-               TransmitAvalible : in std_logic;
-               TransmitData : out std_logic
-    
-               );
-    end COMPONENT;
+        Port ( 
+            clk : in STD_LOGIC;
+            rst : in STD_LOGIC;
 
-    COMPONENT kmap
-        Port ( clk : in STD_LOGIC;
-               rst : in STD_LOGIC;
-               
-               ready : out STD_LOGIC;
-               XPos : in natural;
-               XPos_O : in natural;
-               YPos : in natural;
-               YPos_O : in natural;
-               ValueCur: out STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-               RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
-               RandReady:in std_logic;
+            allDone : out STD_LOGIC;
+
+            ValueCur: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+            mapReady : in STD_LOGIC;
+            xPos : out natural;
+            yPos : out natural;
+            XPos_O : out natural;
+            YPos_O : out natural;
+            outReady : in STD_LOGIC;
+            getOut : out STD_LOGIC;
+            trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
+            LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
+            train : out STD_LOGIC;
+
+            inputRead : out STD_LOGIC;
+            inputReady : in STD_LOGIC;
+            input : in STD_LOGIC_VECTOR (7 downto 0);
+            
+            bmuX: in natural;
+            bmuY: in natural;
+            FindBMU: out std_logic;
+            bmuReady: in std_logic;
+
+            RandReady:in std_logic;
+            RandByte: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+
+            dataT : out STD_LOGIC_VECTOR(7 downto 0);
+            TransmitAvalible : in std_logic;
+            TransmitData : out std_logic
     
-               input: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);    --input vector
-               LNRate: in unsigned(n_bits(rateSensetivity)-1 downto 0);   --Learning and neighbourhood rate multiplied by 1000 to not mess with float 1000 = 0.1 1 =0.0001 
-               train: in std_logic;                                      --signal for training
-    
-               bmuX: out natural;
-               bmuY: out natural;
-               FindBMU: in std_logic;
-               bmuReady: out std_logic
                );
     end COMPONENT;
 
@@ -136,6 +115,10 @@ architecture Behavioral of top_design is
 
     signal XPos_O : natural;
     signal YPos_O : natural;
+
+    signal getOut : STD_LOGIC;
+    signal outReady : STD_LOGIC;
+
 begin
 
     leds(3)<=allDone;
@@ -182,10 +165,12 @@ begin
             dataT   => dataT,
             TransmitData    => TransmitData,
             XPos_O  => XPos_O,
-            YPos_O  => YPos_O
+            YPos_O  => YPos_O,
+            getOut  =>  getOut,
+            outReady => outReady
         );
 
-    kmap_T: kmap
+    kmap_T: entity work.kmap
         port map( 
             clk =>  clk,
             rst =>  rst,
@@ -194,6 +179,8 @@ begin
             YPos    =>  yPos,
             XPos_O  => XPos_O,
             YPos_O  => YPos_O,
+            getOut  =>  getOut,
+            outReady => outReady,
             ValueCur    =>  ValueCur,
             RandByte    =>  RandByte,
             RandReady   =>  RandReady,

@@ -2,8 +2,8 @@
 # Vivado v2020.1.1 (64-bit)
 # SW Build 2960000 on Wed Aug  5 22:57:20 MDT 2020
 # IP Build 2956692 on Thu Aug  6 01:41:30 MDT 2020
-# Start of session at: Tue Dec 29 23:23:22 2020
-# Process ID: 15364
+# Start of session at: Tue Jan  5 00:47:12 2021
+# Process ID: 14204
 # Current directory: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1
 # Command line: vivado.exe -log top_design.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_design.tcl
 # Log file: C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/synth_1/top_design.vds
