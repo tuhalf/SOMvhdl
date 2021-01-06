@@ -96,6 +96,9 @@ architecture Behavioral of kmap is
     signal kmapPReady: std_logic;
 
     signal trainDRVFlag: std_logic;
+
+    signal outReadyDRV : STD_LOGIC;
+
     
     COMPONENT blk_mem_gen_0
     PORT (
@@ -157,7 +160,7 @@ begin
 
         outputT <= (others => '0');
         readTO <= readyy;
-        outReady <= '0';
+        outReadyDRV <= '0';
         addrb <= (others => '0'); 
 
         kmapPReady<= '0';
@@ -248,27 +251,30 @@ begin
                     trainDRVFlag<= '0';
                 end if;
             end if;    
-        elsif getOut ='1' then
+        elsif getOut ='1' and outReadyDRV = '0' then
             wea(0) <= '0';
             --x:= std_logic_vector(to_unsigned(XPos_O,n_bits(MapHeight-1)));
             --y:= std_logic_vector(to_unsigned(YPos_O,n_bits(MapHeight-1)));
             --comb:= x&y;
             case readTO is
                 when readyy =>
-                outReady<= '0';
+                outReadyDRV<= '0';
                 comb:= (XPos_O*MapHeight)+(YPos_O);
                 addrb <= std_logic_vector(to_unsigned(comb,14));
                 readTO <= set;
                 when set =>
                 readTO <= go;
-                outReady<= '0';
+                outReadyDRV<= '0';
                 when go =>
-                outReady<= '1';
+                outReadyDRV<= '1';
                 outputT <= doutb;
                 readTO <= readyy;
                 when others =>
                 readTO<=readyy;
             end case;
+        elsif outReadyDRV = '1' and getOut = '0' then
+            readTO<=readyy;
+            outReadyDRV<= '0';
         elsif bmuReadyDRV = '1' then
             wea(0) <= '0';
             bmuReadyDRV <= '0';
@@ -341,6 +347,7 @@ begin
     end if;
 end process InitP;
 ready<=readyDRV;
+outReady <= outReadyDRV;
 
     
 ---------Train---------

@@ -259,7 +259,7 @@ begin
             getOut<= '0';
             outGetFlag<= '0';
         elsif rising_edge(clk) then
-            if trainDone = '1' and outdone <= '0' then
+            if mapReady = '1' and outdone <= '0' then--trainDone = '1' and outdone <= '0' then
                 if outS < specCount then
                     
                     if outS = 0 then
