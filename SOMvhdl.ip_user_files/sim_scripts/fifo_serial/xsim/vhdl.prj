@@ -1,0 +1,4 @@
+vhdl xil_defaultlib  \
+"../../../../SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial_sim_netlist.vhdl" \
+
+nosort

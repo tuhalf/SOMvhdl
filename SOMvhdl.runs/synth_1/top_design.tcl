@@ -71,6 +71,7 @@ proc create_report { reportName command } {
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
 set_param chipscope.maxJobs 2
+set_param xicom.use_bs_reader 1
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7a35ticsg324-1L
 
@@ -98,12 +99,12 @@ read_vhdl -library xil_defaultlib {
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/top_design.vhd
 }
+read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci
+set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0_ooc.xdc]
+
 read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xci
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial_ooc.xdc]
-
-read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci
-set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -120,8 +121,6 @@ set_property used_in_implementation false [get_files C:/Users/4ever/Documents/Gi
 read_xdc C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc
 set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]
 
-read_xdc dont_touch.xdc
-set_property used_in_implementation false [get_files dont_touch.xdc]
 set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
 

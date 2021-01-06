@@ -49,7 +49,7 @@ entity serial is
 end serial;
 
 architecture Behavioral of serial is
-constant countMax : natural := (100000/baudrate); 
+constant countMax : natural := (100000000/baudrate); 
 signal RegisterIn : STD_LOGIC_VECTOR(7 downto 0);
 signal RegisterOut : STD_LOGIC_VECTOR(7 downto 0);
 signal CountRX : natural;
@@ -59,6 +59,8 @@ signal RXState : RTStates :=idle;
 signal TXState : RTStates :=idle;
 signal RXPos : natural;
 signal TXPos : natural;
+
+signal dataAvDRV: std_logic;
 
 signal writeFifo : std_logic;
 signal readFifo : std_logic;
@@ -70,7 +72,7 @@ signal fifoOut : STD_LOGIC_VECTOR(7 downto 0);
 COMPONENT fifo_serial
   PORT (
     clk : IN STD_LOGIC;
-    srst : IN STD_LOGIC;
+    rst : IN STD_LOGIC;
     din : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
     wr_en : IN STD_LOGIC;
     rd_en : IN STD_LOGIC;
@@ -85,43 +87,20 @@ begin
     fifo_out: fifo_serial
       PORT MAP (
         clk => clk,
-        srst => rst,
+        rst => rst,
         din => RegisterIn,
-        wr_en => writeFifo,
-        rd_en => readFifo,
-        dout => fifoOut,
+        wr_en => dataIn,
+        rd_en => ReadData,
+        dout => dataR,
         full => fifoFull,
         empty => fifoEmpty
       );
 
     ------------
 
-    fifoController: process(clk, rst)
-    begin
-        if rst = '1' then
-            writeFifo   <= '0';
-            readFifo    <= '0';
-        elsif rising_edge(clk) then
-            dataR<=fifoOut;
-            if dataIn = '1' then
-                writeFifo<='1';
-            else
-                writeFifo<='0';
-            end if;
-            if fifoEmpty = '0' then
-                DataAvalible <= '1';
-            else 
-                DataAvalible <= '0';
-            end if;
-            if ReadData = '1' and fifoEmpty = '0' then
-                readFifo<='1';
-            else
-                readFifo<='0';
-            end if;
-        end if;
-    end process fifoController;
 
-    
+
+    DataAvalible <= not(fifoEmpty);
 
 
     Receive: process(clk, rst)
@@ -134,7 +113,9 @@ begin
         elsif rising_edge(clk) then
             case RXState is 
                 when idle =>
+                        dataIn <= '0';
                     if RX = '0' then
+                        CountRX <= 0;
                         RXState <= start;
                     end if;
                 when start =>
@@ -149,6 +130,7 @@ begin
                     end if;
                 when data =>
                     if RXPos = 8 then
+                        CountRX <= 0;
                         RXState <= stopS;
                     elsif CountRX = (countMax) then
                         RXState <= data;
@@ -181,12 +163,12 @@ begin
         elsif rising_edge(clk) then
             case TXState is 
                 when idle =>
+                    TX <= '1';
                     if TransmitData = '1' then
                         TXState <= start;
+                        CountTX <= 0;
                         TransmitAvalible <= '0';
                         RegisterOut<= dataT;
-                    else 
-                        TX <= '1';
                     end if;
                 when start =>
                     if CountTX = (countMax) then
@@ -199,6 +181,7 @@ begin
                     end if;
                 when data =>
                     if TXPos = 8 then
+                        CountTX <= 0;
                         TXState <= stopS;
                     elsif CountTX = (countMax) then
                         TXState <= data;

@@ -73,7 +73,7 @@ architecture Behavioral of kmap is
     signal readyDRV: STD_LOGIC;
     signal bmuReadyDRV: STD_LOGIC;
     signal xCP,yCP : natural; 
-    type bestVariables is array(3 downto 0) of natural;--x,y,dist,cycleCount
+    type bestVariables is array(5 downto 0) of natural;--x,y,dist,cycleCount,x,y
     type bestOfCoresT is array(coresCount-1 downto 0) of bestVariables;
     signal bestOfCores: bestOfCoresT;
     constant cycleCount: natural := ((MapHeight*MapHeight)/coresCount);
@@ -131,12 +131,20 @@ ValueCur <= outputT;
 InitP: process(clk, rst)
 --variable x,y:std_logic_vector(n_bits(MapHeight-1)-1 downto 0);
 --variable comb: std_logic_vector((n_bits(MapHeight-1)*2)-1 downto 0);
+variable bestX,bestY,bestDist: natural;
 variable comb: natural;
 variable kmapTemp: std_logic_vector(17 downto 0);
 variable kmapT: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
 variable distance: natural;
 begin
     if rst = '1' then
+    
+        bestX := 0;
+        bestY := 0;
+        bestDist := 0;
+        bmuX<= 0;
+        bmuY<= 0;
+
         readyDRV<='0';
         --kmap<= (others=>(others=>(others=>(others=>'0'))));
         xCP<= 0;
@@ -266,49 +274,66 @@ begin
             bmuReadyDRV <= '0';
             coresDone(coresCount-1)<= '0';
             bestOfCores(coresCount-1)<= (others => 0);
-        elsif FindBMU ='1'then
+        elsif FindBMU ='1' and bestOfCores(coresCount-1)(3)<cycleCount and coresDone(coresCount-1) = '0'then
             wea(0) <= '0';
-
-            if bestOfCores(coresCount-1)(3)<cycleCount and coresDone(coresCount-1) = '0' then
-                distance:= 0;
-                comb:= ((bestOfCores(coresCount-1)(3)/MapHeight)*MapHeight)+((bestOfCores(coresCount-1)(3) rem MapHeight));
-                if kmapPReady='0' then
-                    case readTO is
-                        when readyy =>
-                        addrb <= std_logic_vector(to_unsigned(comb,14));
-                        readTO <= set;
-                        kmapPReady<='0';
-                        when set =>
-                        readTO <= go;
-                        kmapPReady<='0';
-                        when go =>
-                        kmapP <= doutb;
-                        readTO <= readyy;
-                        kmapPReady<='1';
-                        when others =>
-                        readTO<=readyy;
-                    end case;
-                
-                else
-                    for cs in 0 to specCount-1 loop
-                        --x:= std_logic_vector(to_unsigned((bestOfCores(j)(3)/MapHeight),n_bits(MapHeight-1)));
-                        --y:= std_logic_vector(to_unsigned((bestOfCores(j)(3) rem MapHeight),n_bits(MapHeight-1)));
-                        --comb:= x&y;
-                        distance := distance + abs(to_integer(unsigned(input((7+(cs*8)) downto (0+(cs*8))))) - to_integer(unsigned(kmapP((7+(cs*8)) downto (0+(cs*8))))));
-                    end loop;
-                    if distance<bestOfCores(coresCount-1)(2) or bestOfCores(coresCount-1)(3)=0 then
-                        bestOfCores(coresCount-1)(2) <= distance;
-                        bestOfCores(coresCount-1)(1) <= (bestOfCores(coresCount-1)(3)/MapHeight);
-                        bestOfCores(coresCount-1)(0) <= (bestOfCores(coresCount-1)(3) rem MapHeight);
-                    end if;
-                    bestOfCores(coresCount-1)(3) <= bestOfCores(coresCount-1)(3) +1;
+            distance:= 0;
+            if kmapPReady='0' then
+                case readTO is
+                    when readyy =>
+                    addrb <= std_logic_vector(to_unsigned(bestOfCores(coresCount-1)(3),14));
+                    readTO <= set;
                     kmapPReady<='0';
+                    when set =>
+                    readTO <= go;
+                    kmapPReady<='0';
+                    when go =>
+                    kmapP <= doutb;
+                    readTO <= readyy;
+                    kmapPReady<='1';
+                    when others =>
                     readTO<=readyy;
-                end if;
+                end case;
+            
             else
-                coresDone(coresCount-1)<='1';
+                for cs in 0 to specCount-1 loop
+                    --x:= std_logic_vector(to_unsigned((bestOfCores(j)(3)/MapHeight),n_bits(MapHeight-1)));
+                    --y:= std_logic_vector(to_unsigned((bestOfCores(j)(3) rem MapHeight),n_bits(MapHeight-1)));
+                    --comb:= x&y;
+                    distance := distance + abs(to_integer(unsigned(input((7+(cs*8)) downto (0+(cs*8))))) - to_integer(unsigned(kmapP((7+(cs*8)) downto (0+(cs*8))))));
+                end loop;
+                if distance<bestOfCores(coresCount-1)(2) or bestOfCores(coresCount-1)(3)=0 then
+                    bestOfCores(coresCount-1)(2) <= distance;
+                    bestOfCores(coresCount-1)(1) <= bestOfCores(coresCount-1)(4);
+                    bestOfCores(coresCount-1)(0) <= bestOfCores(coresCount-1)(5);
+                end if;
+                bestOfCores(coresCount-1)(3) <= bestOfCores(coresCount-1)(3) +1;
+                if bestOfCores(coresCount-1)(5)<MapHeight then
+                    bestOfCores(coresCount-1)(5) <= bestOfCores(coresCount-1)(5) +1;
+                else
+                    bestOfCores(coresCount-1)(4) <= bestOfCores(coresCount-1)(4) +1;
+                    bestOfCores(coresCount-1)(5) <= 0;
+                end if;
+                kmapPReady<='0';
+                readTO<=readyy;
             end if;
-
+        elsif FindBMU ='1' and bestOfCores(coresCount-1)(3)>=cycleCount and coresDone(coresCount-1) = '0' then
+            wea(0) <= '0';
+            coresDone(coresCount-1)<='1';
+        elsif coresDone(coresCount-1) = '1' and FindBMU ='1' then
+            wea(0) <= '0';
+            bestX := 0;
+            bestY := 0;
+            bestDist := 0;
+            for o in 0 to coresCount-1 loop
+                if bestOfCores(o)(2) <= bestDist then
+                    bestX:=bestOfCores(o)(0);
+                    bestY:=bestOfCores(o)(1);
+                    bestDist:=bestOfCores(o)(2);
+                end if;
+            end loop;
+            bmuX<=bestX;
+            bmuY<=bestY;
+            bmuReadyDRV<='1';
         else
             wea(0) <= '0';
             readTO<=readyy;
@@ -414,33 +439,33 @@ ready<=readyDRV;
 --        end if;
 --    end process core;
 --end generate cores;
-
-    mestO: process(clk, rst)
-    variable bestX,bestY,bestDist: natural;
-    begin
-        if rst = '1' then
-            bestX := 0;
-            bestY := 0;
-            bestDist := 0;
-            bmuX<= 0;
-            bmuY<= 0;
-        elsif rising_edge(clk) then
-            if signed(coresDone) = to_signed(-1, coresDone'length) and FindBMU ='1' and train='0' and init = '0' then
-                bestX := 0;
-                bestY := 0;
-                bestDist := 0;
-                for o in 0 to coresCount-1 loop
-                    if bestOfCores(o)(2) <= bestDist then
-                        bestX:=bestOfCores(o)(0);
-                        bestY:=bestOfCores(o)(1);
-                        bestDist:=bestOfCores(o)(2);
-                    end if;
-                end loop;
-                bmuX<=bestX;
-                bmuY<=bestY;
-                bmuReadyDRV<='1';
-            end if;
-        end if;
-    end process mestO;
+--
+--    mestO: process(clk, rst)
+--    variable bestX,bestY,bestDist: natural;
+--    begin
+--        if rst = '1' then
+--            bestX := 0;
+--            bestY := 0;
+--            bestDist := 0;
+--            bmuX<= 0;
+--            bmuY<= 0;
+--        elsif rising_edge(clk) then
+--            if signed(coresDone) = to_signed(-1, coresDone'length) and FindBMU ='1' and train='0' and init = '0' then
+--                bestX := 0;
+--                bestY := 0;
+--                bestDist := 0;
+--                for o in 0 to coresCount-1 loop
+--                    if bestOfCores(o)(2) <= bestDist then
+--                        bestX:=bestOfCores(o)(0);
+--                        bestY:=bestOfCores(o)(1);
+--                        bestDist:=bestOfCores(o)(2);
+--                    end if;
+--                end loop;
+--                bmuX<=bestX;
+--                bmuY<=bestY;
+--                bmuReadyDRV<='1';
+--            end if;
+--        end if;
+--    end process mestO;
     bmuReady<=bmuReadyDRV;
 end Behavioral;

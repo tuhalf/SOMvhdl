@@ -33,18 +33,18 @@ use work.utils.all;
 
 entity top_design is
     generic(
-        MapHeight : positive:=300;
+        MapHeight : positive:=100;
         specCount : positive:=3;
         --maxInput : positive:=100;
         rateSensetivity: positive:=1000;
         iterations: positive:=100;
-        neighRad : positive:=300
+        neighRad : positive:=100
         );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            tx : out STD_LOGIC;
            rx : in STD_LOGIC;
-           leds : out STD_LOGIC_VECTOR (3 downto 0);
+           leds : out STD_LOGIC_VECTOR (6 downto 0);
            random : in STD_LOGIC_VECTOR (5 downto 0));
 end top_design;
 
@@ -121,6 +121,9 @@ architecture Behavioral of top_design is
 
 begin
 
+    leds(6)<=DataAvalible;
+    leds(5)<=FindBMU;
+    leds(4)<=train;
     leds(3)<=allDone;
     leds(2)<=bmuReady;
     leds(1)<=ready;

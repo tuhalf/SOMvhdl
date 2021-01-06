@@ -124,16 +124,16 @@ begin
                 elsif currentInputReading = 0 then
                     inputRead <= '1';
                     currentInputReading <= to_unsigned(1,8);
-                elsif not(currentInputReading = inputCount) and not(currentPosReading = specCount-1) then
+                elsif currentInputReading <= inputCount and currentPosReading < specCount then
                     inputRead <= '1';
                     inputs(to_integer(currentInputReading)-1)((7+(to_integer(currentPosReading)*8)) downto (0+(to_integer(currentPosReading)*8))) <= std_logic_vector(unsigned(input));
                     currentPosReading <= currentPosReading + 1;
-                elsif not(currentInputReading = inputCount) and currentPosReading = specCount-1 then
+                elsif currentInputReading <= inputCount and currentPosReading = specCount then
                     inputRead <= '1';
                     inputs(to_integer(currentInputReading)-1)((7+(to_integer(currentPosReading)*8)) downto (0+(to_integer(currentPosReading)*8))) <= std_logic_vector(unsigned(input));
                     currentPosReading <= (others => '0');
                     currentInputReading <= currentInputReading + 1;
-                else
+                elsif currentInputReading > inputCount then
                     inputMapDone <= '1';
                     inputRead <= '0';
                 end if;
@@ -164,7 +164,7 @@ begin
                 case trainStep is
                     when waitS =>
                         if curIters<iterations and mapReady = '1' then
-                            choosenInp<= inputs( to_integer(unsigned(RandByte)) mod to_integer(inputCount));
+                            choosenInp<= inputs( to_integer(unsigned(RandByte(1 downto 0))));--to_integer(inputCount));
                             if curIters = 0 then
                                 curRad<= MapHeight; 
                             else
@@ -269,6 +269,7 @@ begin
                         getOut<= '1';
                         if outReady = '1' then
                             outGetFlag<= '1';
+                            getOut<= '0';
                         end if;
                         if outGetFlag='1' then
                             outS <= outS +1;
@@ -277,7 +278,9 @@ begin
                         dataT<= ValueCur((7+((outS-1)*8)) downto (0+((outS-1)*8)));
                         TransmitData<='1';
                         getOut<= '0';
+                        outS <= outS +1;
                     else
+                        getOut<= '0';
                         TransmitData<='0';
                     end if;
                 else
@@ -291,6 +294,7 @@ begin
                     else
                         if outX < MapHeight-1 then
                             outX <= outX+1;
+                            outY <= 0;
                             outS <= 0;
                         else
                             outdone <= '1';
