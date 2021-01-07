@@ -72,7 +72,7 @@ signal fifoOut : STD_LOGIC_VECTOR(7 downto 0);
 COMPONENT fifo_serial
   PORT (
     clk : IN STD_LOGIC;
-    rst : IN STD_LOGIC;
+    srst : IN STD_LOGIC;
     din : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
     wr_en : IN STD_LOGIC;
     rd_en : IN STD_LOGIC;
@@ -87,7 +87,7 @@ begin
     fifo_out: fifo_serial
       PORT MAP (
         clk => clk,
-        rst => rst,
+        srst => rst,
         din => RegisterIn,
         wr_en => dataIn,
         rd_en => ReadData,
@@ -103,104 +103,108 @@ begin
     DataAvalible <= not(fifoEmpty);
 
 
-    Receive: process(clk, rst)
+    Receive: process(clk)
     begin
-        if rst = '1' then
-            RegisterIn <= (others=>'0');
-            dataIn <= '0';
-            RXState <= idle;
-            RXPos <= 0;
-        elsif rising_edge(clk) then
-            case RXState is 
-                when idle =>
-                        dataIn <= '0';
-                    if RX = '0' then
-                        CountRX <= 0;
-                        RXState <= start;
-                    end if;
-                when start =>
-                    if CountRX = (countMax/2) then
-                        RegisterIn <= (others=>'0');
-                        RXState <= data;
-                        CountRX <= 0;
-                        RXPos <= 0;
-                        dataIn <= '0';
-                    else
-                        CountRX <= CountRX+1;
-                    end if;
-                when data =>
-                    if RXPos = 8 then
-                        CountRX <= 0;
-                        RXState <= stopS;
-                    elsif CountRX = (countMax) then
-                        RXState <= data;
-                        CountRX <= 0;
-                        RegisterIn(RXPos) <= RX;
-                        RXPos <= RXPos+1;
-                    else
-                        CountRX <= CountRX+1;
-                    end if;
-                when stopS =>
-                    if CountRX = (countMax) then
-                        RXState <= idle;
-                        CountRX <= 0;
-                        dataIn <= '1';
-                    else
-                        CountRX <= CountRX+1;
-                    end if;
-            end case;
+        if rising_edge(clk) then
+            if rst = '1' then
+                RegisterIn <= (others=>'0');
+                dataIn <= '0';
+                RXState <= idle;
+                RXPos <= 0;
+            else
+                case RXState is 
+                    when idle =>
+                            dataIn <= '0';
+                        if RX = '0' then
+                            CountRX <= 0;
+                            RXState <= start;
+                        end if;
+                    when start =>
+                        if CountRX = (countMax/2) then
+                            RegisterIn <= (others=>'0');
+                            RXState <= data;
+                            CountRX <= 0;
+                            RXPos <= 0;
+                            dataIn <= '0';
+                        else
+                            CountRX <= CountRX+1;
+                        end if;
+                    when data =>
+                        if RXPos = 8 then
+                            CountRX <= 0;
+                            RXState <= stopS;
+                        elsif CountRX = (countMax) then
+                            RXState <= data;
+                            CountRX <= 0;
+                            RegisterIn(RXPos) <= RX;
+                            RXPos <= RXPos+1;
+                        else
+                            CountRX <= CountRX+1;
+                        end if;
+                    when stopS =>
+                        if CountRX = (countMax) then
+                            RXState <= idle;
+                            CountRX <= 0;
+                            dataIn <= '1';
+                        else
+                            CountRX <= CountRX+1;
+                        end if;
+                end case;
+            end if;
         end if;
     end process Receive;
 
-    Transmit: process(clk, rst)
+    Transmit: process(clk)
     begin
-        if rst = '1' then
-            RegisterOut <= (others=>'0');
-            TransmitAvalible <= '1';
-            TXState <= idle;
-            TXPos <= 0;
-            TX <= '1';
-        elsif rising_edge(clk) then
-            case TXState is 
-                when idle =>
-                    TX <= '1';
-                    if TransmitData = '1' then
-                        TXState <= start;
-                        CountTX <= 0;
-                        TransmitAvalible <= '0';
-                        RegisterOut<= dataT;
-                    end if;
-                when start =>
-                    if CountTX = (countMax) then
-                        TXState <= data;
-                        CountTX <= 0;
-                        TXPos <= 0;
-                    else
-                        TX <= '0';
-                        CountTX <= CountTX+1;
-                    end if;
-                when data =>
-                    if TXPos = 8 then
-                        CountTX <= 0;
-                        TXState <= stopS;
-                    elsif CountTX = (countMax) then
-                        TXState <= data;
-                        CountTX <= 0;
-                        TXPos <= TXPos+1;
-                    else
-                        CountTX <= CountTX+1;
-                        TX <= RegisterOut(TXPos);
-                    end if;
-                when stopS =>
-                    if CountTX = (countMax) then
-                        TXState <= idle;
-                        CountTX <= 0;
-                        TransmitAvalible <= '1';
-                    else
+        if rising_edge(clk) then
+            if rst = '1' then
+                RegisterOut <= (others=>'0');
+                TransmitAvalible <= '1';
+                TXState <= idle;
+                TXPos <= 0;
+                TX <= '1';
+            else
+                case TXState is 
+                    when idle =>
                         TX <= '1';
-                        CountTX <= CountTX+1;
-                    end if;
-            end case;
+                        if TransmitData = '1' then
+                            TXState <= start;
+                            CountTX <= 0;
+                            TransmitAvalible <= '0';
+                            RegisterOut<= dataT;
+                        end if;
+                    when start =>
+                        if CountTX = (countMax) then
+                            TXState <= data;
+                            CountTX <= 0;
+                            TXPos <= 0;
+                        else
+                            TX <= '0';
+                            CountTX <= CountTX+1;
+                        end if;
+                    when data =>
+                        if TXPos = 8 then
+                            CountTX <= 0;
+                            TXState <= stopS;
+                        elsif CountTX = (countMax) then
+                            TXState <= data;
+                            CountTX <= 0;
+                            TXPos <= TXPos+1;
+                        else
+                            CountTX <= CountTX+1;
+                            TX <= RegisterOut(TXPos);
+                        end if;
+                    when stopS =>
+                        if CountTX = (countMax) then
+                            TXState <= idle;
+                            CountTX <= 0;
+                            TransmitAvalible <= '1';
+                        else
+                            TX <= '1';
+                            CountTX <= CountTX+1;
+                        end if;
+                end case;
+            end if;
         end if;
     end process Transmit;
 

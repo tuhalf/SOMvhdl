@@ -90,10 +90,10 @@ set_property ip_output_repo c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.cach
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-add_files -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller.dcp
-set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.runs/controller_synth_1/controller.dcp]
 read_vhdl -library xil_defaultlib {
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/utils.vhd
+  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/expConsts.vhd
+  C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/controller.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/kmap.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/random_bit_generator.vhd
   C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/new/serial.vhd
@@ -105,6 +105,9 @@ set_property used_in_implementation false [get_files -all c:/Users/4ever/Documen
 read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xci
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial_ooc.xdc]
+
+read_ip -quiet c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0.xci
+set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -118,6 +121,9 @@ foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
 read_xdc -mode out_of_context C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/kmap/new/kmap_ooc.xdc
 set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/kmap/new/kmap_ooc.xdc]
 
+read_xdc -mode out_of_context C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/controller/new/controller_ooc.xdc
+set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/controller/new/controller_ooc.xdc]
+
 read_xdc C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc
 set_property used_in_implementation false [get_files C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/constrs_1/new/artyA7.xdc]
 
@@ -125,7 +131,7 @@ set_param ips.enableIPCacheLiteLoad 1
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
-synth_design -top top_design -part xc7a35ticsg324-1L -flatten_hierarchy none
+synth_design -top top_design -part xc7a35ticsg324-1L
 OPTRACE "synth_design" END { }
 
 

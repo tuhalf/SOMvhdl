@@ -78,15 +78,15 @@ entity controller is
 end controller;
 
 architecture Behavioral of controller is
-    signal inputCount: unsigned(7 downto 0);
+    signal inputCount: natural;--unsigned(7 downto 0);
     type inputTable is array (254 downto 0) of STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
     signal inputs : inputTable;
 
-    signal currentInputReading : unsigned(7 downto 0);
-    signal currentPosReading : unsigned(n_bits(specCount)-1 downto 0);
+    signal currentInputReading : natural;--unsigned(7 downto 0);
+    signal currentPosReading : natural;--unsigned(n_bits(specCount)-1 downto 0);
     signal inputMapDone : std_logic;
 
-    type trainSteps is (waitS,bmu_wS,train_wS,bmuS,trainS);
+    type trainSteps is (waitS,bmu_wS,train_wS,bmuS,trainS,train_wS2,train_wS3);
     signal trainStep: trainSteps;
     signal curTX,curTY,endTX,endTY: natural;
     signal choosenInp: STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
@@ -104,142 +104,182 @@ architecture Behavioral of controller is
     signal outGetFlag : std_logic;
 
     signal trainTo: natural;
+
+    signal dataTDRV: std_logic_vector(7 downto 0);
+
+    signal bmuXIn: natural;
+    signal bmuYIn: natural;
+    signal dTableO: natural;
+    signal distTemp: natural;
+    
+    signal xMultiTemp:natural;
+    signal yABSTemp:natural;
+
+    signal ValueCurTmp: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
+
+
 begin
 
+
     -------- Process to read inputs from serial --------
-    readInputsP: process(clk, rst)
+    readInputsP: process(clk)
     begin
-        if rst = '1' then
-            inputCount <= (others => '0');
-            inputRead   <='0';
-            inputs  <= (others => (others => '0'));
-            currentInputReading <= (others => '0');
-            currentPosReading   <= (others => '0');
-            inputMapDone        <= '0';
-        elsif rising_edge(clk) then
-            if inputReady = '1' and inputMapDone = '0' then
-                if inputCount = 0 then
-                    inputCount <= unsigned(input);
-                    inputRead <= '1';
-                elsif currentInputReading = 0 then
-                    inputRead <= '1';
-                    currentInputReading <= to_unsigned(1,8);
-                elsif currentInputReading <= inputCount and currentPosReading < specCount then
-                    inputRead <= '1';
-                    inputs(to_integer(currentInputReading)-1)((7+(to_integer(currentPosReading)*8)) downto (0+(to_integer(currentPosReading)*8))) <= std_logic_vector(unsigned(input));
-                    currentPosReading <= currentPosReading + 1;
-                elsif currentInputReading <= inputCount and currentPosReading = specCount then
-                    inputRead <= '1';
-                    inputs(to_integer(currentInputReading)-1)((7+(to_integer(currentPosReading)*8)) downto (0+(to_integer(currentPosReading)*8))) <= std_logic_vector(unsigned(input));
-                    currentPosReading <= (others => '0');
-                    currentInputReading <= currentInputReading + 1;
-                elsif currentInputReading > inputCount then
-                    inputMapDone <= '1';
+        if rising_edge(clk) then
+            if rst = '1' then
+                inputCount <= 0;
+                inputRead   <='0';
+                inputs  <= (others => (others => '0'));
+                currentInputReading <= 0;
+                currentPosReading   <= 0;
+                inputMapDone        <= '0';
+            else
+                if inputReady = '1' and inputMapDone = '0' then
+                    if inputCount = 0 then
+                        inputCount <= to_integer(unsigned(input));
+                        inputRead <= '1';
+                    elsif currentInputReading = 0 then
+                        inputRead <= '1';
+                        currentInputReading <= 1;
+                    elsif currentInputReading <= inputCount and currentPosReading < specCount then
+                        inputRead <= '1';
+                        inputs(currentInputReading-1)((7+(currentPosReading*8)) downto (0+(currentPosReading*8))) <= input;
+                        currentPosReading <= currentPosReading + 1;
+                    elsif currentInputReading <= inputCount and currentPosReading = specCount then
+                        inputRead <= '1';
+                        --inputs(currentInputReading-1)((7+(currentPosReading*8)) downto (0+(currentPosReading*8))) <= input;
+                        currentPosReading <= 0;
+                        currentInputReading <= currentInputReading + 1;
+                    elsif currentInputReading > inputCount then
+                        inputMapDone <= '1';
+                        inputRead <= '1';
+                    end if;
+                else
                     inputRead <= '0';
                 end if;
-            else
-                inputRead <= '0';
             end if;
         end if;
     end process readInputsP;
     
     -----------bmu and train ------------
-    trainP: process(clk, rst)
+    trainP: process(clk)
     variable LNRateT: unsigned(n_bits(rateSensetivity)-1 downto 0);
     begin
-        if rst = '1' then
-            trainStep <= waitS;
-            choosenInp<= (others => '0');
-            trainInput<= (others => '0');
-            curIters <= 0;
-            curRad<=MapHeight;
-            FindBMU<= '0';
-            trainDone<='0';
-            train   <= '0';
-            xPos    <= 0;
-            yPos    <= 0;
-            trainTo <= 0;
-        elsif rising_edge(clk) then
-            if inputMapDone = '1' and trainDone= '0' then
-                case trainStep is
-                    when waitS =>
-                        if curIters<iterations and mapReady = '1' then
-                            choosenInp<= inputs( to_integer(unsigned(RandByte(1 downto 0))));--to_integer(inputCount));
-                            if curIters = 0 then
-                                curRad<= MapHeight; 
-                            else
-                                curRad<= curRad - (MapHeight/iterations);
-                            end if;  
-                            trainStep <= bmu_wS;
-                        else 
-                            trainDone<='1';
-                        end if;
-                    when bmuS =>
-                        -------
-                        if (bmuX-curRad)>0 then
-                            curTX<= bmuX-curRad;
-                        else
-                            curTX<= 0;
-                        end if;
-
-                        if (bmuY-curRad)>0 then
-                            curTY<= bmuY-curRad;
-                            startY<= bmuY-curRad;
-                        else
-                            curTY<= 0;
-                            startY<= 0;
-                        end if;
-
-                        if (bmuX+curRad)<(MapHeight-1) then
-                            endTX<= bmuX+curRad;
-                        else
-                            endTX<= MapHeight-1;
-                        end if;
-                        if (bmuY+curRad)<(MapHeight-1) then
-                            endTY<= bmuY+curRad;
-                        else
-                            endTY<= MapHeight-1;
-                        end if;
-                        trainStep <= train_wS;
-                    when bmu_wS =>
-                        if bmuReady='1' then
-                            trainStep <= bmuS;
-                            FindBMU<= '0';
-                        else
-                            trainInput<= choosenInp;
-                            FindBMU<= '1';
-                        end if;
-                    when trainS =>
-                        train   <= '0';
-                        if trainTo < 3 then
-                            trainTo <= trainTo +1;
-                        else
-                            if curTY < endTY then
-                                curTY <= curTY +1;
-                                trainStep <= train_wS;
-                            elsif curTY = endTY then
-                                if curTX < endTX then
-                                    curTX <= curTX +1;
-                                    curTY <= startY;
-                                    trainStep <= train_wS;
-                                else
-                                    curIters <= curIters + 1;
-                                    trainStep <= waitS;
-                                end if;
-                            end if;
-                            trainTo <= 0;
-                        end if;
-                    when train_wS =>
-                        LNRateT := to_unsigned(lnRateLut((curIters+(dLut((abs(bmuX-curTX)+(abs(bmuY-curTY)*100))-1)*100))-1),n_bits(rateSensetivity));
-                        LNRate  <= LNRateT;
-                        train   <= '1';
-                        xPos    <= curTX;
-                        yPos    <= curTY;
-                        trainInput <= choosenInp;
-                        trainStep <= trainS;
-                end case;
-            else 
+        if rising_edge(clk) then
+            if rst = '1' then
                 trainStep <= waitS;
+                choosenInp<= (others => '0');
+                trainInput<= (others => '0');
+                curIters <= 0;
+                curRad<=MapHeight;
+                FindBMU<= '0';
+                trainDone<='0';
+                train   <= '0';
+                xPos    <= 0;
+                yPos    <= 0;
+                trainTo <= 0;
+                bmuXIn  <= 0;
+                bmuYIn  <= 0;
+                LNRateT := (others => '0');
+                dTableO <= 0;
+                distTemp<= 0;
+                xMultiTemp<= 0;
+                yABSTemp<= 0;
+            else
+                if inputMapDone = '1' and trainDone= '0' then
+                    case trainStep is
+                        when waitS =>
+                            if curIters<iterations and mapReady = '1' then
+                                choosenInp<= inputs( to_integer(unsigned(RandByte(1 downto 0))));--to_integer(inputCount));
+                                if curIters = 0 then
+                                    curRad<= MapHeight; 
+                                else
+                                    curRad<= curRad - 1;--(MapHeight/iterations);
+                                end if;  
+                                trainStep <= bmu_wS;
+                            elsif curIters=iterations and mapReady = '1' then
+                                trainDone<='1';
+                            end if;
+                        when bmuS =>
+                            -------
+                            --if (bmuXIn-curRad)>0 then
+                            --    curTX<= bmuXIn-curRad;
+                            --else
+                                curTX<= 0;
+                            --end if;
+
+                            --if (bmuYIn-curRad)>0 then
+                            --    curTY<= bmuYIn-curRad;
+                            --    startY<= bmuYIn-curRad;
+                            --else
+                                curTY<= 0;
+                                startY<= 0;
+                            --end if;
+
+                            --if (bmuXIn+curRad)<(MapHeight-1) then
+                            --    endTX<= bmuXIn+curRad;
+                            --else
+                                endTX<= MapHeight-1;
+                            --end if;
+                            --if (bmuYIn+curRad)<(MapHeight-1) then
+                            --    endTY<= bmuYIn+curRad;
+                            --else
+                                endTY<= MapHeight-1;
+                            --end if;
+                            xMultiTemp<= abs(bmuXIn-0);
+                            yABSTemp<=abs(bmuYIn-0);
+                            trainStep <= train_wS;
+                        when bmu_wS =>
+                            if bmuReady='1' then
+                                trainStep <= bmuS;
+                                bmuXIn  <= bmuX;
+                                bmuYIn  <= bmuY;  
+                                FindBMU<= '0';
+                            else
+                                trainInput<= choosenInp;
+                                FindBMU<= '1';
+                            end if;
+                        when trainS =>
+                            train   <= '0';
+                            if trainTo < 15 then
+                                trainTo <= trainTo +1;
+                            else
+                                if curTY < endTY then
+                                    curTY <= curTY +1;
+                                    xMultiTemp<=abs(bmuXIn-curTX);
+                                    yABSTemp<=abs(bmuYIn-curTY+1);
+                                    trainStep <= train_wS;
+                                elsif curTY = endTY then
+                                    if curTX < endTX then
+                                        curTX <= curTX +1;
+                                        curTY <= startY;
+                                        xMultiTemp<=abs(bmuXIn-(curTX+1));
+                                        yABSTemp<=abs(bmuYIn-startY);
+                                        trainStep <= train_wS;
+                                    else
+                                        curIters <= curIters + 1;
+                                        trainStep <= waitS;
+                                    end if;
+                                end if;
+                                trainTo <= 0;
+                            end if;
+                        when train_wS =>
+                            distTemp<=((yABSTemp+(xMultiTemp*100))-1);
+                            trainStep <= train_wS2;
+                        when train_wS2 =>
+                            dTableO<= dLut(distTemp)*100;
+                            trainStep <= train_wS3;
+                        when train_wS3 =>
+                            LNRateT := to_unsigned(lnRateLut((curIters+dTableO)-1),n_bits(rateSensetivity));
+                            LNRate  <= LNRateT;
+                            train   <= '1';
+                            xPos    <= curTX;
+                            yPos    <= curTY;
+                            trainInput <= choosenInp;
+                            trainStep <= trainS;
+                    end case;
+                else 
+                    trainStep <= waitS;
+                end if;
             end if;
         end if;
     end process trainP;
@@ -247,63 +287,62 @@ begin
     allDone<=trainDone;
 
     ----------output data-------
-    out_P: process(clk, rst)
+    out_P: process(clk)
     begin
-        if rst = '1' then
-            outX <= 0;
-            outY <= 0;
-            outS <= 0;
-            XPos_O    <= 0;
-            YPos_O    <= 0;
-            outdone <= '0';
-            getOut<= '0';
-            outGetFlag<= '0';
-        elsif rising_edge(clk) then
-            if mapReady = '1' and outdone <= '0' then--trainDone = '1' and outdone <= '0' then
-                if outS < specCount then
-                    
-                    if outS = 0 then
-                        XPos_O<= outX;
-                        YPos_O<= outY;
-                        TransmitData<='0';
-                        getOut<= '1';
-                        if outReady = '1' then
-                            outGetFlag<= '1';
+        if rising_edge(clk) then
+            if rst = '1' then
+                outX <= 0;
+                outY <= 0;
+                outS <= 0;
+                XPos_O    <= 0;
+                YPos_O    <= 0;
+                outdone <= '0';
+                getOut<= '0';
+                outGetFlag<= '0';
+                TransmitData<='0';
+                dataTDRV<= (others => '0');
+                ValueCurTmp<=(others => '0');
+            else
+                if trainDone = '1' and outdone <= '0' then --mapReady = '1' and outdone <= '0' then--
+                    if outS <= specCount then
+                        if outS = 0 and outGetFlag = '0'then
+                            XPos_O<= outX;
+                            YPos_O<= outY;
+                            TransmitData<='0';
+                            getOut<= '1';
+                            if outReady = '1' then
+                                outGetFlag<= '1';
+                                outS <= outS +1;
+                                ValueCurTmp<=ValueCur;
+                            end if;
+                        elsif TransmitAvalible = '1' then
+                            dataTDRV<= ValueCurTmp((7+((outS-1)*8)) downto (0+((outS-1)*8)));
+                            TransmitData<='1';
                             getOut<= '0';
-                        end if;
-                        if outGetFlag='1' then
                             outS <= outS +1;
-                        end if;
-                    elsif TransmitAvalible = '1' then
-                        dataT<= ValueCur((7+((outS-1)*8)) downto (0+((outS-1)*8)));
-                        TransmitData<='1';
-                        getOut<= '0';
-                        outS <= outS +1;
-                    else
-                        getOut<= '0';
-                        TransmitData<='0';
-                    end if;
-                else
-                    outGetFlag<= '0';
-                    getOut<= '0';
-
-                    TransmitData<='0';
-                    if outY < MapHeight-1 then
-                        outY <= outY + 1;
-                        outS <= 0;
-                    else
-                        if outX < MapHeight-1 then
-                            outX <= outX+1;
-                            outY <= 0;
-                            outS <= 0;
                         else
-                            outdone <= '1';
+                            getOut<= '0';
+                            TransmitData<='0';
+                        end if;
+                    else
+                        outGetFlag<= '0';
+                        getOut<= '0';
+                        outS <= 0;
+                        TransmitData<='0';
+                        if outY < MapHeight then
+                            outY <= outY + 1;
+                        else
+                            if outX < MapHeight then
+                                outX <= outX+1;
+                                outY <= 0;
+                            else
+                                outdone <= '1';
+                            end if;
                         end if;
                     end if;
                 end if;
-                XPos_O    <= 0;
-                YPos_O    <= 0;
             end if;
         end if;
     end process out_P;
+    dataT <= dataTDRV;
 end Behavioral;

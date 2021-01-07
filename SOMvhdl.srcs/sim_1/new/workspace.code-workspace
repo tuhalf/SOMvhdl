@@ -8,7 +8,12 @@
 		},
 		{
 			"path": "..\\..\\constrs_1\\new"
+		},
+		{
+			"path": "..\\..\\..\\Tools"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.pythonPath": "C:\\Users\\4ever\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+	}
 }

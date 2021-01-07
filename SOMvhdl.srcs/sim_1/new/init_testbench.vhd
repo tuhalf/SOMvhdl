@@ -26,6 +26,8 @@ use ieee.math_real.all;
 -- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
+use work.utils.all;
+
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
 --library UNISIM;
@@ -38,31 +40,48 @@ end init_testbench;
 architecture Behavioral of init_testbench is
     signal clk :  STD_LOGIC := '0';
     signal rst :  STD_LOGIC := '0';
-    signal init:  STD_LOGIC := '0';
     signal ready : STD_LOGIC:= '0';
-    signal XPos :  positive := 0;
-    signal YPos :  positive := 0;
+    signal outReady : STD_LOGIC:= '0';
+    signal XPos :  natural := 0;
+    signal XPos_O :  natural := 0;
+    signal YPos :  natural := 0;
+    signal YPos_O :  natural := 0;
     signal ValueCur: STD_LOGIC_VECTOR((7*3)+(3-1) downto 0) := (others => '0');
     signal RandByte:  STD_LOGIC_VECTOR((7*3)+(3-1) downto 0)    := (others => '0');
     signal RandReady:std_logic  := '0';
     constant half_period : time := 5 ns;
+    signal input:  STD_LOGIC_VECTOR((7*3)+(3-1) downto 0);    --input vector
+    signal LNRate: unsigned(n_bits(1000)-1 downto 0);   --Learning and neighbourhood rate multiplied by 1000 to not mess with float 1000 = 0.1 1 =0.0001 
+    signal train: std_logic;                                      --signal for  
+    signal bmuX: natural;
+    signal bmuY: natural;
+    signal FindBMU: std_logic;
+    signal bmuReady: std_logic;
+    signal getOut: std_logic;
 begin
     map_t: entity WORK.kmap 
-        generic map(
-            MapHeight => 300,
-            specCount => 3
-            )
-        Port map( 
-               clk      => clk,
-               rst      => rst,
-               init     => init,
-               ready    => ready,
-               XPos     => XPos,
-               YPos     => YPos,
-               ValueCur => ValueCur,
-               RandByte => RandByte,
-               RandReady=> RandReady
-               );
+    port map( 
+        clk =>  clk,
+        rst =>  rst,
+        ready   => ready,
+        XPos    =>  xPos,
+        YPos    =>  yPos,
+        XPos_O  => XPos_O,
+        YPos_O  => YPos_O,
+        getOut  =>  getOut,
+        outReady => outReady,
+        ValueCur    =>  ValueCur,
+        RandByte    =>  RandByte,
+        RandReady   =>  RandReady,
+        input   =>  input,
+        LNRate  =>  LNRate,
+        train   =>  train,
+        bmuX    =>  bmuX,
+        bmuY    =>  bmuY,
+        FindBMU =>  FindBMU,
+        bmuReady    => bmuReady  
+    );
+    getOut <=(ready and not(outReady));
 
     clk <= not clk after half_period;
     
@@ -75,7 +94,6 @@ begin
         rst<='1';
         wait for half_period*2;
         rst<='0';
-        init<='1';
         wait for half_period*2;
         RandReady<='1';
         for i in 0 to (300*300) loop
@@ -89,7 +107,6 @@ begin
         end loop;
         wait for half_period*2;
         RandReady<='0';
-        init<='0';
         wait until rst='1';
     end process mainP;
 

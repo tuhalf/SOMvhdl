@@ -1,5 +1,7 @@
 # compile vhdl design source files
 vhdl xil_defaultlib  \
+"../../../../SOMvhdl.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0_sim_netlist.vhdl" \
+"../../../../SOMvhdl.srcs/sources_1/new/utils.vhd" \
 "../../../../SOMvhdl.srcs/sources_1/new/kmap.vhd" \
 "../../../../SOMvhdl.srcs/sim_1/new/init_testbench.vhd" \
 
