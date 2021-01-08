@@ -1,6 +1,6 @@
 m = read.table("map.csv",header=F,sep=",")
 nbRows <- 100
-nbCols <- 66
+nbCols <- 100
 output = matrix(nrow=nbRows,ncol=nbCols)
 row <- 1
 col <- 1

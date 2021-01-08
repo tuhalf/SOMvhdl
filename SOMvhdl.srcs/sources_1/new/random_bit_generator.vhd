@@ -51,6 +51,7 @@ signal count: std_logic_vector(7 downto 0);
 type countStates is(first,second);
 signal countState:countStates;
 signal rndPrev: std_logic_vector(5 downto 0);
+signal randpos: unsigned(2 downto 0);
 begin
   --------------------------State Registers ----------------------
 --StateReg: PROCESS (Clk,Rst)
@@ -79,6 +80,7 @@ begin
         RandReady<='0';
         Currstate<= (others => (others => '0'));
       else
+        randpos<= Currstate(1)(2)&'0'&Currstate(2)(1);
         if init = '0' then
           if countReady = '0' then
             case countState is
@@ -117,7 +119,7 @@ begin
   end process countPRP;
 
   feedbackG : for j in 0 to specCount-1 generate
-    feedback(j) <= Currstate(j)(4) XOR RandInput(3) XOR Currstate(j)(2) XOR Currstate(j)(0);
+    feedback(j) <= Currstate(j)(4) XOR Currstate(j)(3) XOR Currstate(j)(2) XOR Currstate(j)(0);
     Nextstate(j) <= feedback(j) & Currstate(j)(7 DOWNTO 1);
     RandByte((7+(j*8)) downto (0+(j*8))) <= Currstate(j);
   end generate;

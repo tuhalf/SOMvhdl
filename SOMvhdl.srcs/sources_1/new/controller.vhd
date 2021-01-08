@@ -117,6 +117,8 @@ architecture Behavioral of controller is
 
     signal ValueCurTmp: STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);
 
+    signal TransmitDataDRV: std_logic;
+
 
 begin
 
@@ -299,40 +301,49 @@ begin
                 outdone <= '0';
                 getOut<= '0';
                 outGetFlag<= '0';
-                TransmitData<='0';
+                TransmitDataDRV<='0';
                 dataTDRV<= (others => '0');
                 ValueCurTmp<=(others => '0');
             else
-                if trainDone = '1' and outdone <= '0' then --mapReady = '1' and outdone <= '0' then--
+                if mapReady = '1' and outdone <= '0' then--trainDone = '1' and outdone <= '0' then --
                     if outS <= specCount then
                         if outS = 0 and outGetFlag = '0'then
                             XPos_O<= outX;
                             YPos_O<= outY;
-                            TransmitData<='0';
+                            TransmitDataDRV<='0';
                             getOut<= '1';
                             if outReady = '1' then
                                 outGetFlag<= '1';
                                 outS <= outS +1;
                                 ValueCurTmp<=ValueCur;
                             end if;
-                        elsif TransmitAvalible = '1' then
+                        elsif TransmitAvalible = '1' and TransmitDataDRV = '0' then
                             dataTDRV<= ValueCurTmp((7+((outS-1)*8)) downto (0+((outS-1)*8)));
-                            TransmitData<='1';
+                            --if outS =1 then
+                            --    dataTDRV<= std_logic_vector(to_unsigned(outX,8));
+                            --elsif outS =2 then
+                            --    dataTDRV<= std_logic_vector(to_unsigned(outY,8));
+                            --elsif outS =3 then
+                            --    dataTDRV<= std_logic_vector(to_unsigned(outS,8));
+                            --else 
+                            --    dataTDRV<= std_logic_vector(to_unsigned(255,8));
+                            --end if;
+                            TransmitDataDRV<='1';
                             getOut<= '0';
                             outS <= outS +1;
                         else
                             getOut<= '0';
-                            TransmitData<='0';
+                            TransmitDataDRV<='0';
                         end if;
                     else
                         outGetFlag<= '0';
                         getOut<= '0';
                         outS <= 0;
-                        TransmitData<='0';
-                        if outY < MapHeight then
+                        TransmitDataDRV<='0';
+                        if outY < MapHeight-1 then
                             outY <= outY + 1;
                         else
-                            if outX < MapHeight then
+                            if outX < MapHeight-1 then
                                 outX <= outX+1;
                                 outY <= 0;
                             else
@@ -345,4 +356,5 @@ begin
         end if;
     end process out_P;
     dataT <= dataTDRV;
+    TransmitData<= TransmitDataDRV;
 end Behavioral;

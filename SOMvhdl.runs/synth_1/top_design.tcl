@@ -106,7 +106,7 @@ read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial.xdc]
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/fifo_serial/fifo_serial_ooc.xdc]
 
-read_ip -quiet c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0.xci
+read_ip -quiet C:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0.xci
 set_property used_in_implementation false [get_files -all c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
