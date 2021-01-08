@@ -103,7 +103,7 @@ begin
           else
             if initCount = specCount then
               init <= '1';
-            elsif(init = '0' and countReady = '1') then
+            else
               Currstate(initCount) <= count;
               initCount<= initCount+1;
               countReady<='0';

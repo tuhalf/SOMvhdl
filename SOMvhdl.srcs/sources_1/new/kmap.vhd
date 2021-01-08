@@ -55,6 +55,7 @@ entity kmap is
            input: in STD_LOGIC_VECTOR((7*specCount)+(specCount-1) downto 0);    --input vector
            LNRate: in unsigned(n_bits(rateSensetivity*10)-1 downto 0);   --Learning and neighbourhood rate multiplied by 1000 to not mess with float 1000 = 0.1 1 =0.0001 
            train: in std_logic;                                      --signal for training
+           trainDoneM: out std_logic;
 
            bmuX: out natural;
            bmuY: out natural;
@@ -245,6 +246,8 @@ begin
             multiA3 <= (others => '0'); 
             multiB3 <= (others => '0');
 
+            trainDoneM<= '0';
+
         else
             if readyDRV = '0' then
                 init <= '1';
@@ -294,7 +297,7 @@ begin
                     wea(0) <= '0';
                 end if;
             elsif trainDRVFlag = '1' then
-                comb:= (xCP*MapHeight)+(yCP);
+                comb:= (XPos*MapHeight)+(YPos);
                 if kmapPReady='0' then
                     wea(0) <= '0';
 
@@ -355,9 +358,9 @@ begin
                             kmapTemp3<= (trainInputTemp3*dividerConst);
                             trainStates<=finalize1;
                         when finalize1=>
-                            kmapT(7 downto 0) := std_logic_vector(unsigned(kmapP(7 downto 0)) +unsigned(kmapTemp1(31 downto 24)));
-                            kmapT(15 downto 8) := std_logic_vector(unsigned(kmapP(15 downto 8)) +unsigned(kmapTemp2(31 downto 24)));
-                            kmapT(23 downto 16) := std_logic_vector(unsigned(kmapP(23 downto 16)) +unsigned(kmapTemp3(31 downto 24)));
+                            kmapT(7 downto 0) := std_logic_vector(unsigned(kmapP(7 downto 0)) + unsigned(kmapTemp1(31 downto 24)));--5);--
+                            kmapT(15 downto 8) := std_logic_vector(unsigned(kmapP(15 downto 8)) + unsigned(kmapTemp2(31 downto 24)));--5);--
+                            kmapT(23 downto 16) := std_logic_vector(unsigned(kmapP(23 downto 16)) + unsigned(kmapTemp3(31 downto 24)));--5);--
                             wea(0) <= '1';
                             addra<= std_logic_vector(to_unsigned(comb,14));
                             dina <= kmapT;
@@ -365,9 +368,8 @@ begin
                         when done =>
                             kmapPReady<='0';
                             wea(0) <= '0';
-                            if train = '0' then
-                                trainDRVFlag<= '0';
-                            end if;
+                            trainDoneM <= '1';
+                            trainDRVFlag<= '0';
                             trainStates<=prep;
                         when others =>
                             trainStates<=prep;
@@ -467,6 +469,7 @@ begin
                 bmuY<=bestOfCores(coresCount-1)(1);
                 bmuReadyDRV<='1';
             else
+                trainDoneM<='0';
                 wea(0) <= '0';
                 readTO<=readyy;
             end if;

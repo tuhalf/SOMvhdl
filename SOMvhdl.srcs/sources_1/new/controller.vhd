@@ -57,6 +57,7 @@ entity controller is
            trainInput : out STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
            LNRate : out unsigned(n_bits(rateSensetivity)-1 downto 0);
            train : out STD_LOGIC;
+           trainDoneM: in std_logic;
 
            inputRead : out STD_LOGIC;
            inputReady : in STD_LOGIC;
@@ -72,8 +73,9 @@ entity controller is
 
            dataT : out STD_LOGIC_VECTOR(7 downto 0);
            TransmitAvalible : in std_logic;
-           TransmitData : out std_logic
+           TransmitData : out std_logic;
 
+           btn1 : in std_logic
            );
 end controller;
 
@@ -88,11 +90,10 @@ architecture Behavioral of controller is
 
     type trainSteps is (waitS,bmu_wS,train_wS,bmuS,trainS,train_wS2,train_wS3);
     signal trainStep: trainSteps;
-    signal curTX,curTY,endTX,endTY: natural;
+    signal curTX,curTY: natural;
     signal choosenInp: STD_LOGIC_VECTOR ((7*specCount)+(specCount-1) downto 0);
     signal curIters : natural;
     signal curRad : natural;
-    signal startY : natural;
 
     signal trainDone: std_logic;
 
@@ -119,6 +120,9 @@ architecture Behavioral of controller is
 
     signal TransmitDataDRV: std_logic;
 
+    signal outdrv: std_logic;
+    signal indrv: std_logic;
+
 
 begin
 
@@ -134,11 +138,19 @@ begin
                 currentInputReading <= 0;
                 currentPosReading   <= 0;
                 inputMapDone        <= '0';
+                indrv<= '0';
             else
-                if inputReady = '1' and inputMapDone = '0' then
+                if inputReady='1' and indrv = '0' then
+                    indrv<= '1';
+                else
+                    indrv<= '0';
+                end if;
+                if indrv = '1' and inputMapDone = '0' then
                     if inputCount = 0 then
                         inputCount <= to_integer(unsigned(input));
                         inputRead <= '1';
+                        --dataTDRV<= std_logic_vector(to_unsigned(inputCount,8));
+                        --TransmitDataDRV<='1';
                     elsif currentInputReading = 0 then
                         inputRead <= '1';
                         currentInputReading <= 1;
@@ -186,6 +198,9 @@ begin
                 distTemp<= 0;
                 xMultiTemp<= 0;
                 yABSTemp<= 0;
+                curTX<= 0;
+                curTY<= 0;
+
             else
                 if inputMapDone = '1' and trainDone= '0' then
                     case trainStep is
@@ -202,30 +217,18 @@ begin
                                 trainDone<='1';
                             end if;
                         when bmuS =>
-                            -------
-                            --if (bmuXIn-curRad)>0 then
-                            --    curTX<= bmuXIn-curRad;
-                            --else
                                 curTX<= 0;
-                            --end if;
-
-                            --if (bmuYIn-curRad)>0 then
-                            --    curTY<= bmuYIn-curRad;
-                            --    startY<= bmuYIn-curRad;
-                            --else
                                 curTY<= 0;
-                                startY<= 0;
+                                --startY<= 0;
                             --end if;
 
                             --if (bmuXIn+curRad)<(MapHeight-1) then
                             --    endTX<= bmuXIn+curRad;
                             --else
-                                endTX<= MapHeight-1;
                             --end if;
                             --if (bmuYIn+curRad)<(MapHeight-1) then
                             --    endTY<= bmuYIn+curRad;
                             --else
-                                endTY<= MapHeight-1;
                             --end if;
                             xMultiTemp<= abs(bmuXIn-0);
                             yABSTemp<=abs(bmuYIn-0);
@@ -242,23 +245,23 @@ begin
                             end if;
                         when trainS =>
                             train   <= '0';
-                            if trainTo < 15 then
-                                trainTo <= trainTo +1;
-                            else
-                                if curTY < endTY then
+                            if trainDoneM = '1' then
+                                if curTY < MapHeight-1 then
                                     curTY <= curTY +1;
                                     xMultiTemp<=abs(bmuXIn-curTX);
                                     yABSTemp<=abs(bmuYIn-curTY+1);
                                     trainStep <= train_wS;
-                                elsif curTY = endTY then
-                                    if curTX < endTX then
+                                else
+                                    if curTX < MapHeight-1 then
                                         curTX <= curTX +1;
-                                        curTY <= startY;
+                                        curTY <= 0;
                                         xMultiTemp<=abs(bmuXIn-(curTX+1));
-                                        yABSTemp<=abs(bmuYIn-startY);
+                                        yABSTemp<=abs(bmuYIn);
                                         trainStep <= train_wS;
                                     else
                                         curIters <= curIters + 1;
+                                        curTX<= 0;
+                                        curTY<= 0;
                                         trainStep <= waitS;
                                     end if;
                                 end if;
@@ -304,8 +307,25 @@ begin
                 TransmitDataDRV<='0';
                 dataTDRV<= (others => '0');
                 ValueCurTmp<=(others => '0');
+                outdrv<= '0';
             else
-                if trainDone = '1' and outdone <= '0' then --mapReady = '1' and outdone <= '0' then--
+                if btn1 = '1' and outdone = '0' then
+                    outdrv<='1';
+                elsif outdrv = '1' and outdone = '1' then 
+                    outX <= 0;
+                    outY <= 0;
+                    outS <= 0;
+                    XPos_O    <= 0;
+                    YPos_O    <= 0;
+                    outdone <= '0';
+                    getOut<= '0';
+                    outGetFlag<= '0';
+                    TransmitDataDRV<='0';
+                    dataTDRV<= (others => '0');
+                    ValueCurTmp<=(others => '0');
+                    outdrv<= '0';
+                end if;
+                if (trainDone = '1' or outdrv='1') and outdone = '0' then --mapReady = '1' and outdone <= '0' then--
                     if outS <= specCount then
                         if outS = 0 and outGetFlag = '0'then
                             XPos_O<= outX;
@@ -318,7 +338,9 @@ begin
                                 ValueCurTmp<=ValueCur;
                             end if;
                         elsif TransmitAvalible = '1' and TransmitDataDRV = '0' then
+                            --dataTDRV<= RandByte((7+((outS-1)*8)) downto (0+((outS-1)*8)));
                             dataTDRV<= ValueCurTmp((7+((outS-1)*8)) downto (0+((outS-1)*8)));
+
                             --if outS =1 then
                             --    dataTDRV<= std_logic_vector(to_unsigned(outX,8));
                             --elsif outS =2 then

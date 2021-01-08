@@ -1,4 +1,4 @@
-m = read.table("map.csv",header=F,sep=",")
+m = read.table("mapRand.csv",header=F,sep=",")
 nbRows <- 100
 nbCols <- 100
 output = matrix(nrow=nbRows,ncol=nbCols)
@@ -16,5 +16,3 @@ for (i in 1:(nbRows*nbCols)){
 
 t = matrix(seq(1,nbRows*nbCols),nbRows,nbCols,byrow=T)
 image(t,col=output,axes=F)
-
-

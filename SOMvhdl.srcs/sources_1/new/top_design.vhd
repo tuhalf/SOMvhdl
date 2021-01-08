@@ -45,6 +45,7 @@ entity top_design is
            tx : out STD_LOGIC;
            rx : in STD_LOGIC;
            leds : out STD_LOGIC_VECTOR (6 downto 0);
+           btn1 : in std_logic;
            random : in STD_LOGIC_VECTOR (5 downto 0));
 end top_design;
 
@@ -82,6 +83,7 @@ architecture Behavioral of top_design is
 
     signal getOut : STD_LOGIC;
     signal outReady : STD_LOGIC;
+    signal trainDoneM: std_logic;
 
 begin
 
@@ -134,7 +136,9 @@ begin
             XPos_O  => XPos_O,
             YPos_O  => YPos_O,
             getOut  =>  getOut,
-            outReady => outReady
+            outReady => outReady,
+            trainDoneM => trainDoneM,
+            btn1    => btn1
         );
 
     kmap_T: entity work.kmap
@@ -157,6 +161,7 @@ begin
             bmuX    =>  bmuX,
             bmuY    =>  bmuY,
             FindBMU =>  FindBMU,
+            trainDoneM => trainDoneM,
             bmuReady    => bmuReady  
         );
     random_T: entity work.random_bit_generator
