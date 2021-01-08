@@ -305,7 +305,7 @@ begin
                 dataTDRV<= (others => '0');
                 ValueCurTmp<=(others => '0');
             else
-                if mapReady = '1' and outdone <= '0' then--trainDone = '1' and outdone <= '0' then --
+                if trainDone = '1' and outdone <= '0' then --mapReady = '1' and outdone <= '0' then--
                     if outS <= specCount then
                         if outS = 0 and outGetFlag = '0'then
                             XPos_O<= outX;
