@@ -99,9 +99,9 @@ architecture Behavioral of kmap is
 
     signal outReadyDRV : STD_LOGIC;
 
-    signal kmapTemp1: unsigned(31 downto 0);
-    signal kmapTemp2: unsigned(31 downto 0);
-    signal kmapTemp3: unsigned(31 downto 0);
+    signal kmapTemp1: unsigned(34 downto 0);
+    signal kmapTemp2: unsigned(34 downto 0);
+    signal kmapTemp3: unsigned(34 downto 0);
     signal trainInputTemp1: unsigned(17 downto 0);
     signal trainInputTemp2: unsigned(17 downto 0);
     signal trainInputTemp3: unsigned(17 downto 0);
@@ -128,11 +128,17 @@ architecture Behavioral of kmap is
     signal multiB3: std_logic_vector(7 downto 0);
     signal multiP3: std_logic_vector(17 downto 0);
 
-    constant dividerConst: unsigned(13 downto 0) := to_unsigned(163,14);
+    constant dividerConst: unsigned(16 downto 0) := to_unsigned(137,17);
 
     signal isNegative1: std_logic;
     signal isNegative2: std_logic;
     signal isNegative3: std_logic;
+
+    type bmuSteps is (setD,calcD,outD);
+    signal bmuStep : bmuSteps;
+    signal distanceIn: natural;
+
+
     
     
     COMPONENT blk_mem_gen_0
@@ -263,6 +269,9 @@ begin
             isNegative2<= '0';
             isNegative3<= '0';
 
+            bmuStep<= setD;
+            distanceIn<=0;
+
         else
             if readyDRV = '0' then
                 init <= '1';
@@ -272,6 +281,10 @@ begin
 
             if train = '1' and trainDRVFlag ='0' then
                 trainDRVFlag<= '1';
+            end if;
+
+            if bmuReadyDRV= '1' then
+                bmuReadyDRV<= '0';
             end if;
 
             if init = '1' and RandReady = '1' then
@@ -396,19 +409,19 @@ begin
                         when finalize1=>
                             trainDoneM <= '0';
                             if isNegative1 = '1' then
-                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) - to_integer(unsigned(kmapTemp1(31 downto 14))),8));
+                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) - to_integer(unsigned(kmapTemp1(34 downto 17))),8));
                             else
-                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) + to_integer(unsigned(kmapTemp1(31 downto 14))),8));
+                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) + to_integer(unsigned(kmapTemp1(34 downto 17))),8));
                             end if;
                             if isNegative2 = '1' then
-                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) - to_integer(unsigned(kmapTemp2(31 downto 14))),8));
+                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) - to_integer(unsigned(kmapTemp2(34 downto 17))),8));
                             else
-                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) + to_integer(unsigned(kmapTemp2(31 downto 14))),8));
+                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) + to_integer(unsigned(kmapTemp2(34 downto 17))),8));
                             end if;
                             if isNegative3 = '1' then
-                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) - to_integer(unsigned(kmapTemp3(31 downto 14))),8));
+                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) - to_integer(unsigned(kmapTemp3(34 downto 17))),8));
                             else
-                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) + to_integer(unsigned(kmapTemp3(31 downto 14))),8));
+                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) + to_integer(unsigned(kmapTemp3(34 downto 17))),8));
                             end if;
                             wea(0) <= '1';
                             addra<= std_logic_vector(to_unsigned(comb,14));
@@ -454,13 +467,19 @@ begin
                 trainDoneM <= '0';
                 readTO<=readyy;
                 outReadyDRV<= '0';
-            elsif bmuReadyDRV = '1' then
+            elsif coresDone = '1' and FindBMU ='0' then
                 trainDoneM <= '0';
                 wea(0) <= '0';
-                bmuReadyDRV <= '0';
                 coresDone<= '0';
-                bestOfCores<= (others => 0);
-            elsif FindBMU ='1' and bestOfCores(3)<cycleCount and coresDone = '0'then
+                bestOfCores(1)<= 0;
+                bestOfCores(2)<= 800;
+                bestOfCores(3)<= 0;
+                bestOfCores(4)<= 0;
+                bestOfCores(5)<= 0;
+                bestOfCores(0)<= 0;
+                kmapPReady<='0';
+                readTO<=readyy;
+            elsif FindBMU ='1'  and coresDone = '0'then
                 trainDoneM <= '0';
                 wea(0) <= '0';
                 distance:= 0;
@@ -480,45 +499,56 @@ begin
                         kmapP <= doutb;
                         readTO <= readyy;
                         kmapPReady<='1';
+                        bmuStep<=setD;
                         when others =>
                         readTO<=readyy;
                     end case;
                 
                 else
-                    distance:= 0;
-                    for cs in 0 to specCount-1 loop
-                        distance := distance + abs(to_integer(unsigned(input((7+(cs*8)) downto (0+(cs*8))))) - to_integer(unsigned(kmapP((7+(cs*8)) downto (0+(cs*8))))));
-                    end loop;
-                    if distance<bestOfCores(2) then
-                        bestOfCores(2) <= distance;
-                        bestOfCores(1) <= bestOfCores(4);
-                        bestOfCores(0) <= bestOfCores(5);
-                    end if;
-                    bestOfCores(3) <= bestOfCores(3) +1;
-                    if bestOfCores(5)<MapHeight then
-                        bestOfCores(5) <= bestOfCores(5) +1;
-                    else
-                        bestOfCores(4) <= bestOfCores(4) +1;
-                        bestOfCores(5) <= 0;
-                    end if;
-                    kmapPReady<='0';
-                    readTO<=readyy;
+                    case bmuStep is
+                        when setD =>
+                            distance:= 0;
+                            for cs in 0 to specCount-1 loop
+                                distance := distance + abs(to_integer(unsigned(input((7+(cs*8)) downto (0+(cs*8))))) - to_integer(unsigned(kmapP((7+(cs*8)) downto (0+(cs*8))))));
+                            end loop;
+                            distanceIn<=distance;
+                            bmuStep<= calcD;
+                        when calcD =>
+                            if distanceIn<bestOfCores(2) then
+                                bestOfCores(2) <= distanceIn;
+                                bestOfCores(1) <= bestOfCores(4);
+                                bestOfCores(0) <= bestOfCores(5);
+                            end if;
+                            bmuStep<= outD;
+                        when outD =>
+                            bestOfCores(3) <= bestOfCores(3) +1;
+                            if bestOfCores(5)<MapHeight-1 then
+                                bestOfCores(5) <= bestOfCores(5) +1;
+                            elsif bestOfCores(5)=MapHeight-1 and bestOfCores(4)<MapHeight-1 then
+                                bestOfCores(4) <= bestOfCores(4) +1;
+                                bestOfCores(5) <= 0;
+                            elsif bestOfCores(5)=MapHeight-1 and bestOfCores(4)=MapHeight-1 then
+                                trainDoneM <= '0';
+                                wea(0) <= '0';
+                                coresDone<='1';
+                                bmuX<=bestOfCores(1);
+                                bmuY<=bestOfCores(0);
+                                bmuReadyDRV<='1';
+                            end if;
+                            bmuStep<= setD;
+                            kmapPReady<= '0';
+                            readTO <= readyy;
+
+                        when others =>
+                            bmuStep<= setD;
+                            
+                    
+                    end case;
+                    
                 end if;
-            elsif FindBMU ='1' and bestOfCores(3)=cycleCount and coresDone = '0' then
-                trainDoneM <= '0';
-                wea(0) <= '0';
-                coresDone<='1';
-            elsif coresDone = '1' and FindBMU ='1' then
-                trainDoneM <= '0';
-                wea(0) <= '0';
-                bmuX<=bestOfCores(1);
-                bmuY<=bestOfCores(0);
-                bmuReadyDRV<='1';
             else
                 trainDoneM<='0';
                 wea(0) <= '0';
-                readTO<=readyy;
-                kmapPReady<='0';
             end if;
         end if;
     end if;

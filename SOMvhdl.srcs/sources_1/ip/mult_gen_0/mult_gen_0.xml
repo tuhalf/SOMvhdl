@@ -224,11 +224,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:07 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -253,11 +253,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -271,11 +271,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -291,11 +291,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -320,11 +320,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:f14910ee</spirit:value>
+            <spirit:value>9:74742a01</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -340,11 +340,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:f14910ee</spirit:value>
+            <spirit:value>9:74742a01</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -358,11 +358,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:51:29 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:08 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -376,11 +376,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Jan 07 18:52:10 UTC 2021</spirit:value>
+            <spirit:value>Sun Jan 10 14:13:56 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:ec80bbb0</spirit:value>
+            <spirit:value>9:16e431c1</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -566,7 +566,7 @@
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_B_TYPE</spirit:name>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_B_TYPE">0</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_B_TYPE">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_OUT_HIGH</spirit:name>
@@ -918,7 +918,7 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>PortBType</spirit:name>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.PortBType" spirit:choiceRef="choice_list_8506c89f" spirit:order="6">Signed</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.PortBType" spirit:choiceRef="choice_list_8506c89f" spirit:order="6">Unsigned</spirit:value>
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>
@@ -929,7 +929,7 @@
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>PortBWidth</spirit:name>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.PortBWidth" spirit:order="7" spirit:minimum="2" spirit:maximum="64" spirit:rangeType="long">8</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.PortBWidth" spirit:order="7" spirit:minimum="1" spirit:maximum="64" spirit:rangeType="long">8</spirit:value>
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>

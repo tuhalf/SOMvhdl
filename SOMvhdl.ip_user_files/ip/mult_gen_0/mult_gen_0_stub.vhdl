@@ -1,7 +1,7 @@
 -- Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2020.1.1_AR75516 (win64) Build 2960000 Wed Aug  5 22:57:20 MDT 2020
--- Date        : Thu Jan  7 21:52:10 2021
+-- Date        : Sun Jan 10 17:13:55 2021
 -- Host        : LAPTOP-50F2E74H running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
 --               c:/Users/4ever/Documents/GitHub/SOMvhdl/SOMvhdl.srcs/sources_1/ip/mult_gen_0/mult_gen_0_stub.vhdl

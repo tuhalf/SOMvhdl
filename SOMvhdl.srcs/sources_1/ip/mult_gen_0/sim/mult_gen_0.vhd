@@ -123,7 +123,7 @@ BEGIN
       C_A_WIDTH => 10,
       C_A_TYPE => 1,
       C_B_WIDTH => 8,
-      C_B_TYPE => 0,
+      C_B_TYPE => 1,
       C_OUT_HIGH => 17,
       C_OUT_LOW => 0,
       C_MULT_TYPE => 0,
