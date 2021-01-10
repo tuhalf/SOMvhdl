@@ -75,10 +75,9 @@ architecture Behavioral of kmap is
     signal bmuReadyDRV: STD_LOGIC;
     signal xCP,yCP : natural; 
     type bestVariables is array(5 downto 0) of natural;--x,y,dist,cycleCount,x,y
-    type bestOfCoresT is array(coresCount-1 downto 0) of bestVariables;
-    signal bestOfCores: bestOfCoresT;
+    signal bestOfCores: bestVariables;
     constant cycleCount: natural := ((MapHeight*MapHeight)/coresCount);
-    signal coresDone: std_logic_vector(coresCount-1 downto 0);
+    signal coresDone: std_logic;
     --constant j: integer := 0;
     signal init: STD_LOGIC;
 
@@ -107,10 +106,14 @@ architecture Behavioral of kmap is
     signal trainInputTemp2: unsigned(17 downto 0);
     signal trainInputTemp3: unsigned(17 downto 0);
 
+    signal trainMultiTemp1: unsigned(7 downto 0);
+    signal trainMultiTemp2: unsigned(7 downto 0);
+    signal trainMultiTemp3: unsigned(7 downto 0);
+
     type trainSt is (prep,prep2,finalize1,done);
     signal trainStates : trainSt;
 
-    type pipeStates is (setP,oneP,twoP,threeP,fourP);
+    type pipeStates is (setP,setP2,oneP,twoP,threeP,fourP);
     signal multiplierST : pipeStates;
 
     signal multiA1: std_logic_vector(9 downto 0);
@@ -126,6 +129,10 @@ architecture Behavioral of kmap is
     signal multiP3: std_logic_vector(17 downto 0);
 
     constant dividerConst: unsigned(13 downto 0) := to_unsigned(163,14);
+
+    signal isNegative1: std_logic;
+    signal isNegative2: std_logic;
+    signal isNegative3: std_logic;
     
     
     COMPONENT blk_mem_gen_0
@@ -225,8 +232,8 @@ begin
             kmapPReady<= '0';
             kmapP<= (others => '0');
     
-            bestOfCores(coresCount-1)<= (others => 0);
-            coresDone(coresCount-1)<='0';
+            bestOfCores<= (others => 0);
+            coresDone<='0';
             trainDRVFlag <= '0';
             trainStates<= prep;
             kmapTemp1   <= (others => '0');
@@ -235,6 +242,10 @@ begin
             trainInputTemp1  <= (others => '0');
             trainInputTemp2  <= (others => '0');
             trainInputTemp3  <= (others => '0');
+
+            trainMultiTemp1  <= (others => '0');
+            trainMultiTemp2  <= (others => '0');
+            trainMultiTemp3  <= (others => '0');
 
             multiplierST<= setP;
             multiA1 <= (others => '0'); 
@@ -247,6 +258,10 @@ begin
             multiB3 <= (others => '0');
 
             trainDoneM<= '0';
+
+            isNegative1<= '0';
+            isNegative2<= '0';
+            isNegative3<= '0';
 
         else
             if readyDRV = '0' then
@@ -298,6 +313,7 @@ begin
                 end if;
             elsif trainDRVFlag = '1' then
                 comb:= (XPos*MapHeight)+(YPos);
+                inpTemp :=input;
                 if kmapPReady='0' then
                     wea(0) <= '0';
 
@@ -324,17 +340,37 @@ begin
                 else
                     case trainStates is
                         when prep =>
+                            trainDoneM <= '0';
                             case multiplierST is
                                 when setP =>
+                                    if unsigned(inpTemp(7 downto 0))  >unsigned(kmapP(7 downto 0)) then
+                                        isNegative1<= '0';
+                                    else 
+                                        isNegative1<= '1';
+                                    end if;
+                                    if unsigned(inpTemp(15 downto 8)) >unsigned(kmapP(15 downto 8)) then
+                                        isNegative2<= '0';
+                                    else 
+                                        isNegative2<= '1';
+                                    end if;
+                                    if unsigned(inpTemp(23 downto 16))>unsigned(kmapP(23 downto 16)) then
+                                        isNegative3<= '0';
+                                    else 
+                                        isNegative3<= '1';
+                                    end if;
+                                    trainMultiTemp1<= to_unsigned(abs(to_integer(unsigned(inpTemp(7 downto 0))  ) - to_integer(unsigned(kmapP(7 downto 0)))),8);
+                                    trainMultiTemp2<= to_unsigned(abs(to_integer(unsigned(inpTemp(15 downto 8)) ) - to_integer(unsigned(kmapP(15 downto 8)))),8);
+                                    trainMultiTemp3<= to_unsigned(abs(to_integer(unsigned(inpTemp(23 downto 16))) - to_integer(unsigned(kmapP(23 downto 16)))),8);
+                                    multiplierST<=setP2;
+                                when setP2 =>
                                     multiA1 <= std_logic_vector(LNRate);
-                                    multiB1 <= inpTemp(7 downto 0);
+                                    multiB1 <= std_logic_vector(trainMultiTemp1);
 
                                     multiA2 <= std_logic_vector(LNRate);
-                                    multiB2 <= inpTemp(15 downto 8);
+                                    multiB2 <= std_logic_vector(trainMultiTemp2);
 
                                     multiA3 <= std_logic_vector(LNRate);
-                                    multiB3 <= inpTemp(23 downto 16);
-
+                                    multiB3 <= std_logic_vector(trainMultiTemp3);
                                     multiplierST<=oneP;
                                 when oneP =>
                                     multiplierST<=twoP;
@@ -343,24 +379,37 @@ begin
                                 when threeP =>
                                     multiplierST<=fourP;
                                 when fourP =>
-                                    inpTemp :=input;
-                                    trainInputTemp1<= unsigned(multiP1) - unsigned(kmapP(7 downto 0));
-                                    trainInputTemp2<= unsigned(multiP2) - unsigned(kmapP(15 downto 8));
-                                    trainInputTemp3<= unsigned(multiP3) - unsigned(kmapP(23 downto 16));
+                                    trainInputTemp1 <= unsigned(multiP1);
+                                    trainInputTemp2 <= unsigned(multiP2);
+                                    trainInputTemp3 <= unsigned(multiP3);
                                     trainStates<=prep2;
                                     multiplierST<=setP;
                                 when others =>
                                     multiplierST<=setP;
                             end case;
                         when prep2 =>
+                            trainDoneM <= '0';
                             kmapTemp1<= (trainInputTemp1*dividerConst);
                             kmapTemp2<= (trainInputTemp2*dividerConst);
                             kmapTemp3<= (trainInputTemp3*dividerConst);
                             trainStates<=finalize1;
                         when finalize1=>
-                            kmapT(7 downto 0) := std_logic_vector(unsigned(kmapP(7 downto 0)) + unsigned(kmapTemp1(31 downto 24)));--5);--
-                            kmapT(15 downto 8) := std_logic_vector(unsigned(kmapP(15 downto 8)) + unsigned(kmapTemp2(31 downto 24)));--5);--
-                            kmapT(23 downto 16) := std_logic_vector(unsigned(kmapP(23 downto 16)) + unsigned(kmapTemp3(31 downto 24)));--5);--
+                            trainDoneM <= '0';
+                            if isNegative1 = '1' then
+                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) - to_integer(unsigned(kmapTemp1(31 downto 14))),8));
+                            else
+                                kmapT(7 downto 0) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(7 downto 0))) + to_integer(unsigned(kmapTemp1(31 downto 14))),8));
+                            end if;
+                            if isNegative2 = '1' then
+                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) - to_integer(unsigned(kmapTemp2(31 downto 14))),8));
+                            else
+                                kmapT(15 downto 8) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(15 downto 8))) + to_integer(unsigned(kmapTemp2(31 downto 14))),8));
+                            end if;
+                            if isNegative3 = '1' then
+                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) - to_integer(unsigned(kmapTemp3(31 downto 14))),8));
+                            else
+                                kmapT(23 downto 16) := std_logic_vector(to_unsigned(to_integer(unsigned(kmapP(23 downto 16))) + to_integer(unsigned(kmapTemp3(31 downto 14))),8));
+                            end if;
                             wea(0) <= '1';
                             addra<= std_logic_vector(to_unsigned(comb,14));
                             dina <= kmapT;
@@ -377,6 +426,7 @@ begin
                     end case;
                 end if;    
             elsif getOut ='1' and outReadyDRV = '0' then
+                trainDoneM <= '0';
                 wea(0) <= '0';
                 --x:= std_logic_vector(to_unsigned(XPos_O,n_bits(MapHeight-1)));
                 --y:= std_logic_vector(to_unsigned(YPos_O,n_bits(MapHeight-1)));
@@ -401,20 +451,23 @@ begin
                     readTO<=readyy;
                 end case;
             elsif outReadyDRV = '1' and getOut = '0' then
+                trainDoneM <= '0';
                 readTO<=readyy;
                 outReadyDRV<= '0';
             elsif bmuReadyDRV = '1' then
+                trainDoneM <= '0';
                 wea(0) <= '0';
                 bmuReadyDRV <= '0';
-                coresDone(coresCount-1)<= '0';
-                bestOfCores(coresCount-1)<= (others => 0);
-            elsif FindBMU ='1' and bestOfCores(coresCount-1)(3)<cycleCount and coresDone(coresCount-1) = '0'then
+                coresDone<= '0';
+                bestOfCores<= (others => 0);
+            elsif FindBMU ='1' and bestOfCores(3)<cycleCount and coresDone = '0'then
+                trainDoneM <= '0';
                 wea(0) <= '0';
                 distance:= 0;
                 if kmapPReady='0' then
                     case readTO is
                         when readyy =>
-                        addrb <= std_logic_vector(to_unsigned(bestOfCores(coresCount-1)(3),14));
+                        addrb <= std_logic_vector(to_unsigned(bestOfCores(3),14));
                         readTO <= set;
                         kmapPReady<='0';
                         when set =>
@@ -432,46 +485,40 @@ begin
                     end case;
                 
                 else
+                    distance:= 0;
                     for cs in 0 to specCount-1 loop
-                        --x:= std_logic_vector(to_unsigned((bestOfCores(j)(3)/MapHeight),n_bits(MapHeight-1)));
-                        --y:= std_logic_vector(to_unsigned((bestOfCores(j)(3) rem MapHeight),n_bits(MapHeight-1)));
-                        --comb:= x&y;
                         distance := distance + abs(to_integer(unsigned(input((7+(cs*8)) downto (0+(cs*8))))) - to_integer(unsigned(kmapP((7+(cs*8)) downto (0+(cs*8))))));
                     end loop;
-                    if distance<bestOfCores(coresCount-1)(2) or bestOfCores(coresCount-1)(3)=0 then
-                        bestOfCores(coresCount-1)(2) <= distance;
-                        bestOfCores(coresCount-1)(1) <= bestOfCores(coresCount-1)(4);
-                        bestOfCores(coresCount-1)(0) <= bestOfCores(coresCount-1)(5);
+                    if distance<bestOfCores(2) then
+                        bestOfCores(2) <= distance;
+                        bestOfCores(1) <= bestOfCores(4);
+                        bestOfCores(0) <= bestOfCores(5);
                     end if;
-                    bestOfCores(coresCount-1)(3) <= bestOfCores(coresCount-1)(3) +1;
-                    if bestOfCores(coresCount-1)(5)<MapHeight then
-                        bestOfCores(coresCount-1)(5) <= bestOfCores(coresCount-1)(5) +1;
+                    bestOfCores(3) <= bestOfCores(3) +1;
+                    if bestOfCores(5)<MapHeight then
+                        bestOfCores(5) <= bestOfCores(5) +1;
                     else
-                        bestOfCores(coresCount-1)(4) <= bestOfCores(coresCount-1)(4) +1;
-                        bestOfCores(coresCount-1)(5) <= 0;
+                        bestOfCores(4) <= bestOfCores(4) +1;
+                        bestOfCores(5) <= 0;
                     end if;
                     kmapPReady<='0';
                     readTO<=readyy;
                 end if;
-            elsif FindBMU ='1' and bestOfCores(coresCount-1)(3)>=cycleCount and coresDone(coresCount-1) = '0' then
+            elsif FindBMU ='1' and bestOfCores(3)=cycleCount and coresDone = '0' then
+                trainDoneM <= '0';
                 wea(0) <= '0';
-                coresDone(coresCount-1)<='1';
-            elsif coresDone(coresCount-1) = '1' and FindBMU ='1' then
+                coresDone<='1';
+            elsif coresDone = '1' and FindBMU ='1' then
+                trainDoneM <= '0';
                 wea(0) <= '0';
-                --for o in 0 to coresCount-1 loop
-                --    if bestOfCores(o)(2) <= bestDist then
-                --        bestX:=bestOfCores(o)(0);
-                --        bestY:=bestOfCores(o)(1);
-                --        bestDist:=bestOfCores(o)(2);
-                --    end if;
-                --end loop;
-                bmuX<=bestOfCores(coresCount-1)(0);
-                bmuY<=bestOfCores(coresCount-1)(1);
+                bmuX<=bestOfCores(1);
+                bmuY<=bestOfCores(0);
                 bmuReadyDRV<='1';
             else
                 trainDoneM<='0';
                 wea(0) <= '0';
                 readTO<=readyy;
+                kmapPReady<='0';
             end if;
         end if;
     end if;

@@ -51,7 +51,8 @@ signal count: std_logic_vector(7 downto 0);
 type countStates is(first,second);
 signal countState:countStates;
 signal rndPrev: std_logic_vector(5 downto 0);
-signal randpos: unsigned(2 downto 0);
+signal randUsedCount: natural;
+constant maxRandUse: natural := 20;
 begin
   --------------------------State Registers ----------------------
 --StateReg: PROCESS (Clk,Rst)
@@ -79,8 +80,8 @@ begin
         init <= '0';
         RandReady<='0';
         Currstate<= (others => (others => '0'));
+        randUsedCount<= 0;
       else
-        randpos<= Currstate(1)(2)&'0'&Currstate(2)(1);
         if init = '0' then
           if countReady = '0' then
             case countState is
@@ -109,9 +110,20 @@ begin
               countReady<='0';
             end if;
           end if;
-        else
+        elsif randUsedCount< maxRandUse then
+          randUsedCount <= randUsedCount +1;
           Currstate <= Nextstate;
           RandReady<='1';
+        else
+          countReady <= '0';
+          --count<= (OTHERS => '0');
+          countState <= first;
+          --rndPrev<=(OTHERS => '0');
+          initCount <= 0;
+          init <= '0';
+          RandReady<='0';
+          Currstate<= (others => (others => '0'));
+          randUsedCount<= 0;
         end if;
       end if;
     end if;
