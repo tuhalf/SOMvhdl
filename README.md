@@ -1,5 +1,5 @@
 
-![](https://img.shields.io/github/stars/tuhalf/SOMvhdl.svg) ![](https://img.shields.io/github/forks/tuhalf/SOMvhdl.md.svg)![](https://img.shields.io/github/release/tuhalf/SOMvhdl.md.svg) ![](https://img.shields.io/github/issues/tuhalf/SOMvhdl.md.svg)
+![](https://img.shields.io/github/stars/tuhalf/SOMvhdl.svg) ![](https://img.shields.io/github/forks/tuhalf/SOMvhdl.svg)![](https://img.shields.io/github/release/tuhalf/SOMvhdl.svg) ![](https://img.shields.io/github/issues/tuhalf/SOMvhdl.svg)
 # SOMVhdl - Self Organizing Map Implementation On FPGA
 
 A simple and scaleable Self Organizing Map implementation written in VHDL. Tested on ARTYA7-35T board.
