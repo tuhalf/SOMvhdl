@@ -6,9 +6,9 @@ A simple and scaleable Self Organizing Map implementation written in VHDL. Teste
 
 ## Tests
 #### Test with 10 color inputs
-![](https://github.com/tuhalf/SOMvhdl/Docs/ScreenShots/TenColorsTest.png)
+![](https://raw.githubusercontent.com/tuhalf/SOMvhdl/main/Docs/ScreenShots/TenColorsTest.png)
 #### Test with 50 color inputs
-![](https://github.com/tuhalf/SOMvhdl/Docs/ScreenShots/50ColorsTest.png)
+![](https://raw.githubusercontent.com/tuhalf/SOMvhdl/main/Docs/ScreenShots/50ColorsTest.png)
 
 ## Features
 - Any number of data entries via serial interface. (Limit is set to 254 but can be changed)
@@ -22,13 +22,13 @@ A simple and scaleable Self Organizing Map implementation written in VHDL. Teste
 You can use Pre-Generated Bitstreams, which are avalible in releases or can generate from source. 
 ##### ! To generate random map to start, you have to connect a 6 bit random bit generator to JA pins. You can use an Attiny85 or an Arduino for this. The necesary codes are in /Tools/RandomInit_attiny85 folder.
 To make sure random map generation works fine, uncomment the commented lines on getMap.py and press BTN1 while running the code. Random output looks something like that:
-![](https://github.com/tuhalf/SOMvhdl/Docs/ScreenShots/RandomMap.png)
+![](https://raw.githubusercontent.com/tuhalf/SOMvhdl/main/Docs/ScreenShots/RandomMap.png)
 
 #### Training 
 To train inputs from CSV files, you can use the Python code in /Tools/getMap.py It reads the output from Train.csv and writes outputs to map.csv. 
 #### Visualization 
 For visualization, I used the idea from [Isidroc SOMcpp Project][1] Using his R script, you can easily visualize the generated map. You can find the script in /Tools/PlotColorMartix.R 
-![](https://github.com/tuhalf/SOMvhdl/Docs/ScreenShots/R.png)
+![](https://raw.githubusercontent.com/tuhalf/SOMvhdl/main/Docs/ScreenShots/R.png)
 
 ## Implementation Summary
 #### Timing
