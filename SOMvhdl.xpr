@@ -380,14 +380,17 @@
           </Gadget>
           <Gadget Name="timing_1" Type="timing" Version="1" Row="0" Column="1">
             <GadgetParam Name="REPORTS" Type="string_list" Value="impl_1#impl_1_route_report_timing_summary_0 "/>
+            <GadgetParam Name="VIEW.TYPE" Type="string" Value="table"/>
           </Gadget>
           <Gadget Name="utilization_1" Type="utilization" Version="1" Row="0" Column="0">
             <GadgetParam Name="REPORTS" Type="string_list" Value="synth_1#synth_1_synth_report_utilization_0 "/>
             <GadgetParam Name="RUN.STEP" Type="string" Value="synth_design"/>
             <GadgetParam Name="RUN.TYPE" Type="string" Value="synthesis"/>
+            <GadgetParam Name="VIEW.TYPE" Type="string" Value="graph"/>
           </Gadget>
           <Gadget Name="utilization_2" Type="utilization" Version="1" Row="1" Column="1">
             <GadgetParam Name="REPORTS" Type="string_list" Value="impl_1#impl_1_place_report_utilization_0 "/>
+            <GadgetParam Name="VIEW.TYPE" Type="string" Value="table"/>
           </Gadget>
         </Gadgets>
       </Dashboard>

@@ -13,7 +13,7 @@ print(ser.name)
 #        writer.writerow([a,b,c])
 #print("doneRand")
 packet = bytearray()
-with open('train2.csv') as csv_file:
+with open('train4.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     csvList=list(csv_reader)
     lenO = len(csvList)
