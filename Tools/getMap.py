@@ -14,7 +14,7 @@ print(ser.name)
 #        
 #        writer.writerow([a,b,c])
 #print("doneRand")
-serial_time = 0.00104
+serial_time = 1040000
 packet = bytearray()
 with open('train4.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -28,7 +28,7 @@ with open('train4.csv') as csv_file:
             #print(int(col))
 
 ser.write(packet)
-start = time.time()
+start = time.time_ns()
 gettime = False
 print("Reading Output")
 f = open('map.csv', 'w',newline='')
@@ -37,11 +37,11 @@ with f:
     for x in range(10000):
         a = int.from_bytes(ser.read(1),"big")
         if gettime == False:
-            end = time.time()
+            end = time.time_ns()
             gettime = True
         b = int.from_bytes(ser.read(1),"big")
         c = int.from_bytes(ser.read(1),"big")
         
         writer.writerow([a,b,c])
-print("Train Done. Time elapsed(s)",end-start-serial_time)
+print("Train Done. Time elapsed(s)",(end-start-serial_time)/1000000000)
 ser.close()

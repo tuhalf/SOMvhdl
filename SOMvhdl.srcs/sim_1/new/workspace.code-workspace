@@ -14,6 +14,10 @@
 		}
 	],
 	"settings": {
-		"python.pythonPath": "C:\\Users\\4ever\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+		"python.pythonPath": "C:\\Users\\4ever\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
+		"files.associations": {
+			"chrono": "cpp",
+			"iostream": "cpp"
+		}
 	}
 }
