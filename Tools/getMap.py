@@ -4,19 +4,9 @@ import time
 
 ser = serial.Serial('COM9') 
 print(ser.name)
-#f = open('mapRand.csv', 'w',newline='')
-#with f:
-#    writer = csv.writer(f)
-#    for x in range(10000):
-#        a = int.from_bytes(ser.read(1),"big")
-#        b = int.from_bytes(ser.read(1),"big")
-#        c = int.from_bytes(ser.read(1),"big")
-#        
-#        writer.writerow([a,b,c])
-#print("doneRand")
 serial_time = 1040000
 packet = bytearray()
-with open('train5.csv') as csv_file:
+with open('train4.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     csvList=list(csv_reader)
     lenO = len(csvList)
@@ -45,3 +35,15 @@ with f:
         writer.writerow([a,b,c])
 print("Train Done. Time elapsed(s)",(end-start-serial_time)/1000000000)
 ser.close()
+
+
+#f = open('mapRand.csv', 'w',newline='')
+#with f:
+#    writer = csv.writer(f)
+#    for x in range(10000):
+#        a = int.from_bytes(ser.read(1),"big")
+#        b = int.from_bytes(ser.read(1),"big")
+#        c = int.from_bytes(ser.read(1),"big")
+#        
+#        writer.writerow([a,b,c])
+#print("doneRand")

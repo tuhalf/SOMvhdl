@@ -11,13 +11,20 @@
 		},
 		{
 			"path": "..\\..\\..\\Tools"
+		},
+		{
+			"path": "..\\..\\..\\Tools\\RandomInit_attiny85"
+		},
+		{
+			"path": "..\\..\\..\\..\\SOMcpp\\SOM"
 		}
 	],
 	"settings": {
 		"python.pythonPath": "C:\\Users\\4ever\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
 		"files.associations": {
 			"chrono": "cpp",
-			"iostream": "cpp"
+			"iostream": "cpp",
+			"xmemory": "cpp"
 		}
 	}
 }
